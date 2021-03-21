@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
-      return Text("Signed in");
+      return Text("Welcome ${firebaseUser.email}");
     }
     else return SignInPage();
   }

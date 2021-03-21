@@ -5,11 +5,12 @@ import '../scheme.dart';
 class CustomInput extends StatelessWidget{
   TextEditingController _textEditingController = TextEditingController();
   FocusNode _focusNode = new FocusNode();
-  TextInputType inputType;
+
+  bool obscureText;
   String label;
   Function validator;
 
-  CustomInput({this.label, this.inputType=TextInputType.text, this.validator}) { _textEditingController = TextEditingController(); }
+  CustomInput({this.label, this.validator, this.obscureText = false}) { _textEditingController = TextEditingController(); }
 
   String get text { return this._textEditingController.text; }
 
@@ -44,8 +45,7 @@ class CustomInput extends StatelessWidget{
               // borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(color: Scheme.inputBorder, width: 2.5),
             ),),
-          // obscureText: true,
-          keyboardType: this.inputType,
+          obscureText: obscureText,
         )
       );
   }

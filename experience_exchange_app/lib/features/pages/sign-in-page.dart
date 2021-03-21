@@ -18,11 +18,11 @@ class SignInPage extends StatefulWidget {
 
 class SignInPageState extends State<SignInPage> {
   CustomInput emailInput = CustomInput(label: 'Username/email',
-    inputType: TextInputType.emailAddress,
     validator: validateEmail,);
   CustomInput passwordInput = CustomInput(label: 'Password',
-    inputType: TextInputType.visiblePassword,
-    validator: validatePassword,);
+      validator: validatePassword,
+      obscureText: true
+  );
 
   //TODO: fix keys??
   // final _formPageKey = GlobalKey<FormState>();

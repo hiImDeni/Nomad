@@ -18,11 +18,11 @@ class SignUpPage extends StatefulWidget {
 
 class SignUpPageState extends State<SignUpPage> {
   CustomInput emailInput = CustomInput(label: 'Username/email',
-    inputType: TextInputType.emailAddress,
     validator: validateEmail,);
   CustomInput passwordInput = CustomInput(label: 'Password',
-    inputType: TextInputType.visiblePassword,
-    validator: validatePassword,);
+    validator: validatePassword,
+    obscureText: true
+  );
 
   final log = Logger();
 
