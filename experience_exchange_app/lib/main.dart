@@ -1,12 +1,11 @@
+import 'package:experience_exchange_app/features/scheme.dart';
+
 import 'features/pages/sign-in-page.dart';
-import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/features/scheme.dart';
 import 'package:experience_exchange_app/common/service/authentication-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'features/pages/sign-up-page.dart';
 
 
 Future<void> main() async {
@@ -26,8 +25,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Scheme.mainColor,
+          // primaryColor: Scheme.mainColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          unselectedWidgetColor: Scheme.inactiveColor
         ),
         home: HomePage(),
       ),
@@ -43,7 +44,12 @@ class HomePage extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
-      return Text("Welcome ${firebaseUser.email}");
+      return new Scaffold(
+        body: Column(children: [
+          Text("Welcome ${firebaseUser.email}"),
+          ElevatedButton(child: Text("Logout"), onPressed: () => FirebaseAuth.instance.signOut(),)
+        ])
+      );
     }
     else return SignInPage();
   }

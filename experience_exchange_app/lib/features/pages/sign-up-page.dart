@@ -2,6 +2,7 @@ import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/f
 import 'package:experience_exchange_app/common/domain/validators/validators.dart';
 import 'package:experience_exchange_app/features/pages/sign-in-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,12 +51,11 @@ class SignUpPageState extends State<SignUpPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text('SIGN IN', style: TextStyle(
+                                Text('SIGN UP', style: TextStyle(
                                     color: Scheme.mainColor, fontSize: 30)),
                                 emailInput,
                                 passwordInput,
-                                ElevatedButton(
-                                    onPressed: () => _signUp(), child: Text('Sign In'))
+                                MainButton(text: "Sign Up", action: () => _signUp()),
 
                               ],
                             ),

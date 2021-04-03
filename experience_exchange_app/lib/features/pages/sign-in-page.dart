@@ -2,6 +2,7 @@ import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/f
 import 'package:experience_exchange_app/common/domain/validators/validators.dart';
 import 'package:experience_exchange_app/features/pages/sign-up-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,15 +59,12 @@ class SignInPageState extends State<SignInPage> {
                                 color: Scheme.mainColor, fontSize: 30)),
                             emailInput,
                             passwordInput,
-                            ElevatedButton(
-                                onPressed: () => _signIn(), child: Text('Sign Up')),
-                            ElevatedButton(
-                                onPressed: (){
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => SignUpPage()),
-                                  );
-                                }, child: Text('Sign Up'))
+                            MainButton(text: "Sign In", action: () => _signIn()),
+                            MainButton(text: "Sign Up", action: () async {
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return SignUpPage();
+                              }));
+                            })
 
 
                           ],
