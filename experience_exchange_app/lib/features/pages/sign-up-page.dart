@@ -2,9 +2,9 @@ import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/f
 import 'package:experience_exchange_app/common/domain/validators/validators.dart';
 import 'package:experience_exchange_app/features/pages/sign-in-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -56,7 +56,25 @@ class SignUpPageState extends State<SignUpPage> {
                                 emailInput,
                                 passwordInput,
                                 MainButton(text: "Sign Up", action: () => _signUp()),
+                                Container(
+                                  margin: EdgeInsets.only(top: 20.0),
+                                  child: Text("OR", style: TextStyle(fontSize: 18)),
+                                ),
+                                GoogleSignInButton(action: () => _googleSignIn()),
 
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text("Already have an account? ",),
+                                    TextButton(
+                                        child: Text("Sign In"),
+                                        onPressed: () async {
+                                          await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                            return SignInPage();
+                                          }));
+                                        })
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -79,6 +97,7 @@ class SignUpPageState extends State<SignUpPage> {
 
     if (validateEmail(email) && validatePassword(password)) {
       try {
+        final provider = Provider.of<AuthenticationService>(context, listen: false);
         final currentUser = provider.signUp(email: emailInput.text, password: passwordInput.text);
         log.i(currentUser.toString());
 
@@ -102,5 +121,10 @@ class SignUpPageState extends State<SignUpPage> {
 
   void _goBack(BuildContext context) {
     // Navigator.pop(context);
+  }
+
+  _googleSignIn() {
+    final provider = Provider.of<AuthenticationService>(context, listen: false);
+    provider.signInWithGoogle();
   }
 }

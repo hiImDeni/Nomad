@@ -31,7 +31,6 @@ class SignInPageState extends State<SignInPage> {
   // final _formPageKey = GlobalKey<FormState>();
   // final _pageKey = GlobalKey<ScaffoldState>();
   final log = Logger();
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +59,21 @@ class SignInPageState extends State<SignInPage> {
                             passwordInput,
                             MainButton(text: "Sign In", action: () => _signIn()),
                             GoogleSignInButton(action: () => _googleSignIn(),),
-                            MainButton(text: "Sign Up", action: () async {
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return SignUpPage();
-                              }));
-                            })
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text("Don't have an account? "),
+                                TextButton(
+                                    child: Text("Sign Up first"),
+                                    onPressed: () async {
+                                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return SignUpPage();
+                                      }));
+                                })
+                              ],
+                            ),
+
 
 
                           ],
@@ -101,6 +110,7 @@ class SignInPageState extends State<SignInPage> {
 
         if (currentUser == null) {
           log.e("unable to log in");
+          _showSnackBar("Invalid username or password");
         }
       } catch (e) {
         log.e(e.message);

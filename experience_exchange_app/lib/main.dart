@@ -1,5 +1,6 @@
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'features/pages/sign-in-page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,7 +51,10 @@ class HomePage extends StatelessWidget {
         body: Column(children: [
           Spacer(),
           Text("Welcome ${firebaseUser.email}"),
-          ElevatedButton(child: Text("Logout"), onPressed: () => FirebaseAuth.instance.signOut(),),
+          ElevatedButton(child: Text("Logout"), onPressed: () {
+            GoogleSignIn().disconnect();
+            FirebaseAuth.instance.signOut();
+            },),
           Spacer()
         ])
       );
