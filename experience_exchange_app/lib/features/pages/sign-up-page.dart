@@ -4,6 +4,7 @@ import 'package:experience_exchange_app/features/pages/sign-in-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
 import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
+import 'package:experience_exchange_app/features/widgets/password-input.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,9 @@ class SignUpPage extends StatefulWidget {
 class SignUpPageState extends State<SignUpPage> {
   CustomInput emailInput = CustomInput(label: 'Username/email',
     validator: validateEmail,);
-  CustomInput passwordInput = CustomInput(label: 'Password',
+  PasswordInput passwordInput = PasswordInput(
+    label: 'Password',
     validator: validatePassword,
-    obscureText: true
   );
 
   final log = Logger();
@@ -55,12 +56,12 @@ class SignUpPageState extends State<SignUpPage> {
                                     color: Scheme.mainColor, fontSize: 30)),
                                 emailInput,
                                 passwordInput,
-                                MainButton(text: "Sign Up", action: () => _signUp()),
+                                MainButton(text: "Sign Up", action: () => _signUp(context)),
                                 Container(
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: Text("OR", style: TextStyle(fontSize: 18)),
                                 ),
-                                GoogleSignInButton(action: () => _googleSignIn()),
+                                GoogleSignInButton(action: () => _googleSignIn(context)),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +87,7 @@ class SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void _signUp() async {
+  void _signUp(BuildContext context) async {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
     provider.signInWithGoogle();
 
@@ -119,11 +120,7 @@ class SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  void _goBack(BuildContext context) {
-    // Navigator.pop(context);
-  }
-
-  _googleSignIn() {
+  _googleSignIn(BuildContext context) {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
     provider.signInWithGoogle();
   }

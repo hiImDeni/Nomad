@@ -4,9 +4,12 @@ import 'package:experience_exchange_app/features/pages/sign-up-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
 import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
+import 'package:experience_exchange_app/features/widgets/password-input.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -20,11 +23,14 @@ class SignInPage extends StatefulWidget {
 }
 
 class SignInPageState extends State<SignInPage> {
+  String errorMessage;
+
   CustomInput emailInput = CustomInput(label: 'Username/email',
     validator: validateEmail,);
-  CustomInput passwordInput = CustomInput(label: 'Password',
+
+  PasswordInput passwordInput = PasswordInput(
+      label: 'Password',
       validator: validatePassword,
-      obscureText: true
   );
 
   //TODO: fix keys??
@@ -38,101 +44,103 @@ class SignInPageState extends State<SignInPage> {
         appBar: null,
         // key: _pageKey,
         body:
-    Form(
-      // key: _formPageKey,
-        child:
-        SingleChildScrollView(
-            child: Container(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height,
-                child: Stack(
-                    children: <Widget>[
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text('SIGN IN', style: TextStyle(
-                                color: Scheme.mainColor, fontSize: 30)),
-                            emailInput,
-                            passwordInput,
-                            MainButton(text: "Sign In", action: () => _signIn()),
-                            GoogleSignInButton(action: () => _googleSignIn(),),
-
-                            Row(
+        Form(
+          // key: _formPageKey,
+            child:
+            SingleChildScrollView(
+                child: Container(
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height,
+                    child: Stack(
+                        children: <Widget>[
+                          Container(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text("Don't have an account? "),
-                                TextButton(
-                                    child: Text("Sign Up first"),
-                                    onPressed: () async {
-                                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                        return SignUpPage();
-                                      }));
-                                })
+                                Text('SIGN IN', style: TextStyle(
+                                    color: Scheme.mainColor, fontSize: 30)),
+                                emailInput,
+                                passwordInput,
+                                MainButton(text: "Sign In",
+                                    action: () => _signIn(context)),
+                                GoogleSignInButton(
+                                  action: () => _googleSignIn(context),),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text("Don't have an account? "),
+                                    TextButton(
+                                        child: Text("Sign Up"),
+                                        onPressed: () async {
+                                          await Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return SignUpPage();
+                                                  }));
+                                        })
+                                  ],
+                                ),
+
+
                               ],
                             ),
-
-
-
-                          ],
-                        ),
-                      ),]
+                          ),
+                        ]
+                    )
                 )
             )
         )
-      )
     );
   }
 
-  void _goBack(BuildContext context) {
-    // Navigator.pop(context);
-  }
-
-  _signIn() async {
+  _signIn(BuildContext context) async {
     final storage = FlutterSecureStorage();
     storage.write(key: "loginstatus", value: "loggedin");
     String email = emailInput.text;
     String password = passwordInput.text;
 
-    // if (_formPageKey.currentState.validate()) {
-    //   setState(() {
-    //     isLoading = true;
-    //   });
+    if (!validateEmail(email)) {
+      _showSnackBar(context, "Please enter a valid email");
+      return;
+    }
+    if (!validateEmail(password)) {
+      _showSnackBar(context, "Please enter a valid password");
+      return;
+    }
 
-    if (validateEmail(email) && validatePassword(password)) {
-      try {
-        final provider = Provider.of<AuthenticationService>(context, listen: false);
 
-        final currentUser = provider.signIn(email: emailInput.text, password: passwordInput.text);
-        log.i(currentUser.toString());
+    final provider = Provider.of<AuthenticationService>(context, listen: false);
+    try {
+      final currentUser = provider.signIn(
+          email: emailInput.text, password: passwordInput.text);
 
-        if (currentUser == null) {
-          log.e("unable to log in");
-          _showSnackBar("Invalid username or password");
-        }
-      } catch (e) {
-        log.e(e.message);
-        _showSnackBar(e.message);
+      if (currentUser == null) {
+        log.e("unable to log in");
+        _showSnackBar(context, "Invalid username or password");
       }
-    }
-    else {
-      log.e("Invalid username or password");
-    }
+    } on PlatformException catch (err) {
+      var message = 'An error occurred, please check your credentials!';
 
-    // Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (BuildContext context) => InitializeProviderDataScreen()));
+      if (err.message != null) {
+        message = err.message;
+        setState(() {
+          errorMessage = message;
+        });
+        print(message);
+      }
+      _showSnackBar(context, message);
+    }
   }
 
-  _googleSignIn() {
+  _googleSignIn(BuildContext context) {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
     provider.signInWithGoogle();
   }
 
-  _showSnackBar(String text) {
+  _showSnackBar(BuildContext context, String text) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(text),
     ));

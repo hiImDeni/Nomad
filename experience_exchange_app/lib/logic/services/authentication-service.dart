@@ -20,8 +20,8 @@ class AuthenticationService extends ChangeNotifier {
   AuthenticationService() { _isSigningIn = false; }
 
   Future<UserCredential> signIn({String email, String password}) async{
-    UserCredential user = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-    return user;
+      UserCredential user = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      return user;
   }
 
   Future<UserCredential> signUp({String email, String password}) async{
@@ -42,6 +42,7 @@ class AuthenticationService extends ChangeNotifier {
         idToken: googleAuth.idToken
       );
       UserCredential user = await FirebaseAuth.instance.signInWithCredential(credentials);
+
       isSigningIn = false;
       return user;
     }
