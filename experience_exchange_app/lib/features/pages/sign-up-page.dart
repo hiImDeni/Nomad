@@ -3,11 +3,13 @@ import 'package:experience_exchange_app/common/domain/validators/validators.dart
 import 'package:experience_exchange_app/features/pages/sign-in-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
+import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -26,8 +28,6 @@ class SignUpPageState extends State<SignUpPage> {
   );
 
   final log = Logger();
-
-  final _authFirebase = FirebaseAuth.instance;
 
 
   @override
@@ -69,6 +69,9 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   void _signUp() async {
+    final provider = Provider.of<AuthenticationService>(context, listen: false);
+    provider.signInWithGoogle();
+
     final storage = FlutterSecureStorage();
     storage.write(key: "loginstatus", value: "loggedin");
     String email = emailInput.text;
@@ -76,7 +79,7 @@ class SignUpPageState extends State<SignUpPage> {
 
     if (validateEmail(email) && validatePassword(password)) {
       try {
-        final currentUser = await _authFirebase.createUserWithEmailAndPassword(email: email, password: password);
+        final currentUser = provider.signUp(email: emailInput.text, password: passwordInput.text);
         log.i(currentUser.toString());
 
         if (currentUser == null) {

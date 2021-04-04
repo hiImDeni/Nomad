@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "341095247347",
+    "firebase_url": "https://thesis-project-5393d-default-rtdb.firebaseio.com",
     "project_id": "thesis-project-5393d",
     "storage_bucket": "thesis-project-5393d.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "341095247347-mkagl5snni60ll2769vtmc38oe920l0n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.experience_exchange_app",
+            "certificate_hash": "1fdc4613008cf5cdeeecd586db4fa968e25b058d"
+          }
+        },
         {
           "client_id": "341095247347-s82qclmebokgq4l0di1i3ogh7brgmebl.apps.googleusercontent.com",
           "client_type": 3
@@ -29,6 +38,13 @@
             {
               "client_id": "341095247347-s82qclmebokgq4l0di1i3ogh7brgmebl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "341095247347-2uscdon4lm0ndl6ephc4njoujuq6adtr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.experienceExchangeApp"
+              }
             }
           ]
         }

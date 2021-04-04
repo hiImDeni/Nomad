@@ -2,12 +2,14 @@ import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/f
 import 'package:experience_exchange_app/common/domain/validators/validators.dart';
 import 'package:experience_exchange_app/features/pages/sign-up-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -29,9 +31,6 @@ class SignInPageState extends State<SignInPage> {
   // final _formPageKey = GlobalKey<FormState>();
   // final _pageKey = GlobalKey<ScaffoldState>();
   final log = Logger();
-
-  final _authFirebase = FirebaseAuth.instance;
-
   bool isLoading = false;
 
   @override
@@ -60,6 +59,7 @@ class SignInPageState extends State<SignInPage> {
                             emailInput,
                             passwordInput,
                             MainButton(text: "Sign In", action: () => _signIn()),
+                            GoogleSignInButton(action: () => _googleSignIn(),),
                             MainButton(text: "Sign Up", action: () async {
                               await Navigator.push(context, MaterialPageRoute(builder: (context) {
                                 return SignUpPage();
@@ -69,8 +69,7 @@ class SignInPageState extends State<SignInPage> {
 
                           ],
                         ),
-                      ),
-                      Container()]
+                      ),]
                 )
             )
         )
@@ -95,8 +94,9 @@ class SignInPageState extends State<SignInPage> {
 
     if (validateEmail(email) && validatePassword(password)) {
       try {
-        final currentUser = await _authFirebase.signInWithEmailAndPassword(
-            email: email, password: password);
+        final provider = Provider.of<AuthenticationService>(context, listen: false);
+
+        final currentUser = provider.signIn(email: emailInput.text, password: passwordInput.text);
         log.i(currentUser.toString());
 
         if (currentUser == null) {
@@ -104,11 +104,7 @@ class SignInPageState extends State<SignInPage> {
         }
       } catch (e) {
         log.e(e.message);
-        // setState(() {
-        //   isLoading = false;
-        // });
-        // _pageKey.currentState.showSnackBar(
-        //     SnackBar(content: Text("Could not login.")));
+        _showSnackBar(e.message);
       }
     }
     else {
@@ -119,5 +115,16 @@ class SignInPageState extends State<SignInPage> {
     //     context,
     //     MaterialPageRoute(
     //         builder: (BuildContext context) => InitializeProviderDataScreen()));
+  }
+
+  _googleSignIn() {
+    final provider = Provider.of<AuthenticationService>(context, listen: false);
+    provider.signInWithGoogle();
+  }
+
+  _showSnackBar(String text) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+    ));
   }
 }

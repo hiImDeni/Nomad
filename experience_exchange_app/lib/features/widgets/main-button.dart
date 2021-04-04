@@ -13,7 +13,7 @@ class MainButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 20.0),
-      width: 150,
+      width: 200,
       height: 40,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),

@@ -1,11 +1,12 @@
 import 'package:experience_exchange_app/features/scheme.dart';
+import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 
 import 'features/pages/sign-in-page.dart';
-import 'package:experience_exchange_app/common/service/authentication-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 
 
 Future<void> main() async {
@@ -17,9 +18,10 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: [Provider<AuthenticationService>(
-        create: (_) => AuthenticationService(FirebaseAuth.instance)),
-      StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges)
+    return MultiProvider(providers: [
+      // Provider<AuthenticationService>(create: (_) => AuthenticationService()),
+      ChangeNotifierProvider(create: (context) => AuthenticationService()),
+      StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
       child: MaterialApp(
@@ -46,8 +48,10 @@ class HomePage extends StatelessWidget {
     if (firebaseUser != null) {
       return new Scaffold(
         body: Column(children: [
+          Spacer(),
           Text("Welcome ${firebaseUser.email}"),
-          ElevatedButton(child: Text("Logout"), onPressed: () => FirebaseAuth.instance.signOut(),)
+          ElevatedButton(child: Text("Logout"), onPressed: () => FirebaseAuth.instance.signOut(),),
+          Spacer()
         ])
       );
     }
