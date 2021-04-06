@@ -141,7 +141,7 @@ class SignInPageState extends State<SignInPage> {
   }
 
   _showSnackBar(BuildContext context, String text) {
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
     ));
   }
