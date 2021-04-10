@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../scheme.dart';
 
 class CustomInput extends StatelessWidget{
-  TextEditingController _textEditingController = TextEditingController();
+  TextEditingController _textEditingController;
 
   bool obscureText;
   String label;

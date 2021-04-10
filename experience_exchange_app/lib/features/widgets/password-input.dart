@@ -3,9 +3,33 @@ import 'package:flutter/material.dart';
 
 import '../scheme.dart';
 
-class PasswordInput extends CustomInput{
-  PasswordInput({label, validator, obscureText = true})
-      : super(label: label, validator: validator, obscureText: obscureText);
+class PasswordInput extends StatefulWidget{
+  TextEditingController textEditingController;
+  String get text { return this.textEditingController.text; }
+
+  bool obscureText;
+  String label;
+  Function validator;
+
+  PasswordInput({this.label, this.validator, this.obscureText = true}) { textEditingController = TextEditingController(); }
+
+  @override
+  State<StatefulWidget> createState() {
+    return PasswordInputState(label: label, validator: validator, obscureText: obscureText, textEditingController: textEditingController);
+  }
+}
+
+class PasswordInputState extends State<PasswordInput> {
+  TextEditingController textEditingController;
+
+  bool obscureText;
+  String label;
+  Function validator;
+
+  Color _currentColor = Scheme.inactiveColor;
+  Color _nextColor = Scheme.mainColor;
+
+  PasswordInputState({this.label, this.validator, this.obscureText, this.textEditingController}) {}
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +50,14 @@ class PasswordInput extends CustomInput{
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
             ),
-            suffixIcon: Icon(Icons.visibility),
+            suffixIcon: IconButton(icon: Icon(Icons.visibility, color: _currentColor),
+              onPressed: () => { setState(() {
+                obscureText = !obscureText;
+                Color auxColor = _nextColor;
+                _nextColor = _currentColor;
+                _currentColor = auxColor;
+              }) } ,
+            ),
           ),
           obscureText: obscureText,
         )
