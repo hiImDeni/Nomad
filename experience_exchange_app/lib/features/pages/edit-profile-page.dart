@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../scheme.dart';
 
@@ -20,6 +24,9 @@ class EditProfilePageState extends State<EditProfilePage> {
 
   DateTime dateOfBirth;
   TextEditingController dateController = TextEditingController();
+
+  ImagePicker _imagePicker = ImagePicker();
+  Image _currentImage = Image.asset('assets/images/take-photo.webp');
 
 
   @override
@@ -43,9 +50,10 @@ class EditProfilePageState extends State<EditProfilePage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                CircleAvatar(
-                                  backgroundImage: AssetImage('assets/images/take-photo.webp'),
-                                  radius: 50.0,
+                                CircularProfileAvatar(
+                                  "",
+                                    child: ClipOval(child: _currentImage),
+                                    onTap: () async => await _selectImage(),
                                 ),
                                 firstNameInput,
                                 lastNameInput,
@@ -78,4 +86,12 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   _saveUser(BuildContext context) {}
+
+  _selectImage() async {
+    final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      _currentImage = Image.file(File(pickedFile.path));
+    });
+  }
 }

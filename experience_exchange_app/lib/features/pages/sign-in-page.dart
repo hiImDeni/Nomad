@@ -6,11 +6,9 @@ import 'package:experience_exchange_app/features/widgets/google-signin-button.da
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/features/widgets/password-input.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -97,8 +95,6 @@ class SignInPageState extends State<SignInPage> {
   }
 
   _signIn(BuildContext context) async {
-    final storage = FlutterSecureStorage();
-    storage.write(key: "loginstatus", value: "loggedin");
     String email = emailInput.text;
     String password = passwordInput.text;
 

@@ -1,3 +1,4 @@
+import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -44,6 +45,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return EditProfilePage();
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
