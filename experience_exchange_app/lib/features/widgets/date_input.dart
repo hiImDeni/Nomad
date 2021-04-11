@@ -2,44 +2,36 @@ import 'package:flutter/material.dart';
 
 import '../scheme.dart';
 
-class CustomInput extends StatefulWidget{
+class DateInput extends StatefulWidget{
   TextEditingController _textEditingController;
-
-  bool obscureText;
   String label;
-  Function validator;
 
-  CustomInput({this.label, this.validator, this.obscureText = false}) { _textEditingController = TextEditingController(); }
+  DateInput({this.label}) { _textEditingController = TextEditingController(); }
 
   String get text { return this._textEditingController.text; }
   TextEditingController get textEditingController { return this._textEditingController; }
 
   @override
   State<StatefulWidget> createState() {
-    return CustomInputState(label: label, validator: validator, obscureText: obscureText, textEditingController: textEditingController);
+    return DateInputState(label: label, textEditingController: textEditingController);
   }
 }
 
-class CustomInputState extends State<CustomInput> {
+class DateInputState extends State<DateInput> {
   TextEditingController textEditingController;
-  bool obscureText;
   String label;
-  Function validator;
 
-  CustomInputState({this.label, this.validator, this.obscureText, this.textEditingController});
+  DateInputState({this.label, this.textEditingController});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(top: 30.0, left: 40.0, right: 40.0),
         child:TextField(
+          readOnly: true,
           controller: textEditingController,
-          //TODO: add validator
 
           decoration: InputDecoration(labelText: label,
-            // labelStyle: TextStyle(
-            //     color: _focusNode.hasFocus ? Scheme.mainColor : Scheme.inputBorder //TODO: fix label focus color
-            // ),
             contentPadding: EdgeInsets.only(
                 bottom: 20,
                 left: 15,
@@ -52,7 +44,14 @@ class CustomInputState extends State<CustomInput> {
               borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
             ),
           ),
-          obscureText: obscureText,
+          onTap: () async {
+            var date =  await showDatePicker(
+                context: context,
+                initialDate:DateTime.now(),
+                firstDate:DateTime(1900),
+                lastDate: DateTime(2100));
+            textEditingController.text = date.toString().substring(0,10);
+          },
         )
     );
   }

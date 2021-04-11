@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/date_input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
+import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../scheme.dart';
 
@@ -19,14 +23,16 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class EditProfilePageState extends State<EditProfilePage> {
-  CustomInput firstNameInput = new CustomInput(label: 'First Name');
-  CustomInput lastNameInput = new CustomInput(label: 'Last Name',);
+  CustomInput firstNameInput = CustomInput(label: 'First Name');
+  CustomInput lastNameInput = CustomInput(label: 'Last Name',);
 
   DateTime dateOfBirth;
   TextEditingController dateController = TextEditingController();
+  DateInput dateInput = DateInput(label: 'Date of Birth');
 
   ImagePicker _imagePicker = ImagePicker();
   Image _currentImage = Image.asset('assets/images/take-photo.webp');
+  File _imageFile;
 
 
   @override
@@ -57,20 +63,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 ),
                                 firstNameInput,
                                 lastNameInput,
-                                TextField(
-                                  readOnly: true,
-                                  controller: dateController,
-                                  decoration: InputDecoration(
-                                      hintText: 'Pick your Date'
-                                  ),
-                                  onTap: () async {
-                                    var date =  await showDatePicker(
-                                        context: context,
-                                        initialDate:DateTime.now(),
-                                        firstDate:DateTime(1900),
-                                        lastDate: DateTime(2100));
-                                    dateController.text = date.toString().substring(0,10);
-                                  },),
+                                dateInput,
                                 MainButton(text: "Save",
                                     action: () => _saveUser(context)),
 
@@ -85,13 +78,26 @@ class EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  _saveUser(BuildContext context) {}
+  _saveUser(BuildContext context) async {
+    final provider = Provider.of<AuthenticationService>(context, listen: false);
+
+    Uri firebaseUrl = await _uploadImage();
+
+    provider.updateUserProfile(firstNameInput.text, lastNameInput.text, firebaseUrl);
+  }
 
   _selectImage() async {
     final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
+    _imageFile = File(pickedFile.path);
 
     setState(() {
-      _currentImage = Image.file(File(pickedFile.path));
+      _currentImage = Image.file(_imageFile);
     });
+  }
+
+  Future<Uri> _uploadImage() async {
+    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('images/');
+    UploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
+    uploadTask.then((result) => result.ref.getDownloadURL());
   }
 }

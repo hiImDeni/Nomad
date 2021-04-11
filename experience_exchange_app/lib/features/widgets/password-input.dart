@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import '../scheme.dart';
 
 class PasswordInput extends StatefulWidget{
-  TextEditingController textEditingController;
-  String get text { return this.textEditingController.text; }
+  TextEditingController _textEditingController;
+  String get text { return this._textEditingController.text; }
 
   bool obscureText;
   String label;
   Function validator;
 
-  PasswordInput({this.label, this.validator, this.obscureText = true}) { textEditingController = TextEditingController(); }
+  PasswordInput({this.label, this.validator, this.obscureText = true}) { _textEditingController = TextEditingController(); }
 
   @override
   State<StatefulWidget> createState() {
-    return PasswordInputState(label: label, validator: validator, obscureText: obscureText, textEditingController: textEditingController);
+    return PasswordInputState(label: label, validator: validator, obscureText: obscureText, textEditingController: _textEditingController);
   }
 }
 

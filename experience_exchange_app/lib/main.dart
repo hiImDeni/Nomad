@@ -1,3 +1,4 @@
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
@@ -45,14 +46,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EditProfilePage();
+    // return EditProfilePage();
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
       return new Scaffold(
-        body: Column(children: [
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
           Spacer(),
-          Text("Welcome ${firebaseUser.email}"),
+          CircularProfileAvatar(
+            "",
+            child: ClipOval(child: Text(firebaseUser.photoURL)),
+          ),
+          Text("Welcome ${firebaseUser.displayName}"),
           ElevatedButton(child: Text("Logout"), onPressed: () {
             GoogleSignIn().disconnect();
             FirebaseAuth.instance.signOut();
