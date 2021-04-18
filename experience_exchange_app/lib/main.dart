@@ -55,10 +55,10 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
           Spacer(),
-          CircularProfileAvatar(
-            "",
-            child: ClipOval(child: Text(firebaseUser.photoURL)),
-          ),
+          // CircularProfileAvatar(
+          //   "",
+          //   child: ClipOval(child: Text(firebaseUser.photoURL)),
+          // ),
           Text("Welcome ${firebaseUser.displayName}"),
           ElevatedButton(child: Text("Logout"), onPressed: () {
             GoogleSignIn().disconnect();

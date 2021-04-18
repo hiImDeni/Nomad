@@ -55,10 +55,10 @@ class AuthenticationService extends ChangeNotifier {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future updateUserProfile(String firstName, String lastName, Uri photoUrl) async {
+  Future updateUserProfile(String firstName, String lastName, String photoUrl) async {
     _firebaseAuth.currentUser.updateProfile(
       displayName: firstName + " " + lastName,
-      photoURL: photoUrl as String
+      photoURL: photoUrl
     );
   }
 }

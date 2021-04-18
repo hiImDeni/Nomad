@@ -81,7 +81,9 @@ class EditProfilePageState extends State<EditProfilePage> {
   _saveUser(BuildContext context) async {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
 
-    Uri firebaseUrl = await _uploadImage();
+    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('images/');
+    TaskSnapshot snapshot = await firebaseStorageRef.putFile(_imageFile);
+    String firebaseUrl = await snapshot.ref.getDownloadURL();
 
     provider.updateUserProfile(firstNameInput.text, lastNameInput.text, firebaseUrl);
   }
@@ -95,9 +97,9 @@ class EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
-  Future<Uri> _uploadImage() async {
+  Future<String> _uploadImage() async {
     Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('images/');
-    UploadTask uploadTask = firebaseStorageRef.putFile(_imageFile);
-    uploadTask.then((result) => result.ref.getDownloadURL());
+    TaskSnapshot snapshot = await firebaseStorageRef.putFile(_imageFile);
+    return snapshot.ref.getDownloadURL();
   }
 }
