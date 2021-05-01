@@ -1,17 +1,18 @@
 import 'dart:io';
 
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:experience_exchange_app/common/domain/dtos/userdto.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
 import 'package:experience_exchange_app/features/widgets/date_input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../scheme.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -25,8 +26,8 @@ class EditProfilePage extends StatefulWidget {
 class EditProfilePageState extends State<EditProfilePage> {
   CustomInput firstNameInput = CustomInput(label: 'First Name');
   CustomInput lastNameInput = CustomInput(label: 'Last Name',);
+  CustomInput locationInput = CustomInput(label: 'Location',);
 
-  DateTime dateOfBirth;
   TextEditingController dateController = TextEditingController();
   DateInput dateInput = DateInput(label: 'Date of Birth');
 
@@ -34,6 +35,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   Image _currentImage = Image.asset('assets/images/take-photo.webp');
   File _imageFile;
 
+  UserDto user;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 firstNameInput,
                                 lastNameInput,
                                 dateInput,
+                                locationInput,
                                 MainButton(text: "Save",
                                     action: () => _saveUser(context)),
 
@@ -79,13 +82,15 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   _saveUser(BuildContext context) async {
-    final provider = Provider.of<AuthenticationService>(context, listen: false);
+    final provider = Provider.of<UserService>(context, listen: false);
 
-    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('images/');
+    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('/images').child(_imageFile.path.split('/').last);
     TaskSnapshot snapshot = await firebaseStorageRef.putFile(_imageFile);
     String firebaseUrl = await snapshot.ref.getDownloadURL();
 
-    provider.updateUserProfile(firstNameInput.text, lastNameInput.text, firebaseUrl);
+    user = new UserDto(firstNameInput.text, lastNameInput.text, locationInput.text, DateTime.tryParse(dateInput.text), firebaseUrl);
+
+    provider.updateUserProfile(user);
   }
 
   _selectImage() async {

@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:experience_exchange_app/common/domain/dtos/userdto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthenticationService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestoreDb = FirebaseFirestore.instance;
   final googleSignIn = GoogleSignIn();
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
@@ -53,12 +52,5 @@ class AuthenticationService extends ChangeNotifier {
   void signOut() async {
     // await googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();
-  }
-
-  Future updateUserProfile(String firstName, String lastName, String photoUrl) async {
-    _firebaseAuth.currentUser.updateProfile(
-      displayName: firstName + " " + lastName,
-      photoURL: photoUrl
-    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'features/pages/sign-in-page.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(providers: [
       // Provider<AuthenticationService>(create: (_) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => AuthenticationService()),
+      ChangeNotifierProvider(create: (context) => UserService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
@@ -50,6 +52,8 @@ class HomePage extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
+      if (firebaseUser.displayName == null)
+        return EditProfilePage();
       return new Scaffold(
         body: Column(
             mainAxisAlignment: MainAxisAlignment.center,

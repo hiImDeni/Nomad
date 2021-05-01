@@ -98,7 +98,6 @@ class SignUpPageState extends State<SignUpPage> {
       try {
         final provider = Provider.of<AuthenticationService>(context, listen: false);
         final currentUser = provider.signUp(email: emailInput.text, password: passwordInput.text);
-        log.i(currentUser.toString());
 
         if (currentUser == null) {
           log.e("unable to sign up");
