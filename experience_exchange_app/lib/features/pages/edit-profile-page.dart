@@ -10,32 +10,45 @@ import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 
 class EditProfilePage extends StatefulWidget {
+  UserDto user;
+
+  EditProfilePage({this.user});
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return EditProfilePageState();
+    return EditProfilePageState(user: this.user);
   }
 
 }
 
 class EditProfilePageState extends State<EditProfilePage> {
-  CustomInput firstNameInput = CustomInput(label: 'First Name');
-  CustomInput lastNameInput = CustomInput(label: 'Last Name',);
-  CustomInput locationInput = CustomInput(label: 'Location',);
+  CustomInput firstNameInput;
+  CustomInput lastNameInput;
+  CustomInput locationInput;
 
-  TextEditingController dateController = TextEditingController();
-  DateInput dateInput = DateInput(label: 'Date of Birth');
+  // TextEditingController dateController = TextEditingController();
+  DateInput dateInput;
 
   ImagePicker _imagePicker = ImagePicker();
   Image _currentImage = Image.asset('assets/images/take-photo.webp');
   File _imageFile;
 
   UserDto user;
+
+  EditProfilePageState({this.user}) {
+    if (this.user == null)
+      this.user = UserDto('', '', '', DateTime.now(), '');
+
+    firstNameInput = CustomInput(label: 'First Name', originalText: user.firstName);
+    lastNameInput = CustomInput(label: 'Last Name', originalText: user.lastName,);
+    locationInput = CustomInput(label: 'Location', originalText: user.location,);
+    dateInput =  DateInput(label: 'Date of Birth', originalDate: user.dateOfBirth);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +74,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 CircularProfileAvatar(
                                   "",
                                     child: ClipOval(child: _currentImage),
-                                    onTap: () async => await _selectImage(),
+                                    onTap: () async => await _setImage(),
                                 ),
                                 firstNameInput,
                                 lastNameInput,
@@ -83,19 +96,18 @@ class EditProfilePageState extends State<EditProfilePage> {
 
   _saveUser(BuildContext context) async {
     final provider = Provider.of<UserService>(context, listen: false);
+    // provider.getById(provider.currentUser.uid);
 
-    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('/images').child(_imageFile.path.split('/').last);
-    TaskSnapshot snapshot = await firebaseStorageRef.putFile(_imageFile);
-    String firebaseUrl = await snapshot.ref.getDownloadURL();
+    String firebaseUrl = await _uploadImage();
 
     user = new UserDto(firstNameInput.text, lastNameInput.text, locationInput.text, DateTime.tryParse(dateInput.text), firebaseUrl);
 
     provider.updateUserProfile(user);
   }
 
-  _selectImage() async {
-    final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
-    _imageFile = File(pickedFile.path);
+  _setImage() async {
+    File selectedImage = await _selectImage();
+    _imageFile = await _cropImage(selectedImage);
 
     setState(() {
       _currentImage = Image.file(_imageFile);
@@ -103,8 +115,21 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<String> _uploadImage() async {
-    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('images/');
+    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('/images').child(_imageFile.path.split('/').last);
     TaskSnapshot snapshot = await firebaseStorageRef.putFile(_imageFile);
     return snapshot.ref.getDownloadURL();
+  }
+
+  Future<File> _selectImage() async {
+    final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
+    return File(pickedFile.path);
+  }
+
+  Future<File> _cropImage(File selectedImage) async {
+    return await ImageCropper.cropImage(
+      sourcePath: selectedImage.path,
+      maxWidth: 1080,
+      maxHeight: 1080,
+    );
   }
 }

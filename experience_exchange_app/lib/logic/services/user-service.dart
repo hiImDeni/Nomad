@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/userdto.dart';
-import 'package:experience_exchange_app/common/domain/repository/database_layer.dart';
+import 'package:experience_exchange_app/common/domain/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class UserService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  final UserRepository repository = new UserRepository(); //TODO: dependency injection
+  final UserRepository repository = UserRepository(); //TODO: dependency injection
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   User get currentUser => _firebaseAuth.currentUser;
@@ -21,5 +21,9 @@ class UserService extends ChangeNotifier {
     );
 
     await repository.save(uid, user);
+  }
+
+  Future<UserDto> getById(String uid) async {
+    return await repository.getById(uid);
   }
 }

@@ -5,8 +5,11 @@ import '../scheme.dart';
 class DateInput extends StatefulWidget{
   TextEditingController _textEditingController;
   String label;
+  DateTime originalDate;
 
-  DateInput({this.label}) { _textEditingController = TextEditingController(); }
+  DateInput({this.label, this.originalDate}) {
+    _textEditingController = TextEditingController(text: this.originalDate.toString().substring(0,10));
+  }
 
   String get text { return this._textEditingController.text; }
   TextEditingController get textEditingController { return this._textEditingController; }

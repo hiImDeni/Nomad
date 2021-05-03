@@ -119,6 +119,6 @@ class SignUpPageState extends State<SignUpPage> {
 
   _googleSignIn(BuildContext context) {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
-    provider.signInWithGoogle();
+    provider.signUpWithGoogle();
   }
 }

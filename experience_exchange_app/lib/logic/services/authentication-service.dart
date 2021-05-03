@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/userdto.dart';
+import 'package:experience_exchange_app/common/domain/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthenticationService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final googleSignIn = GoogleSignIn();
+  final UserRepository repository = UserRepository(); //TODO: dependency injection
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   User get currentUser => _firebaseAuth.currentUser;
@@ -49,8 +51,34 @@ class AuthenticationService extends ChangeNotifier {
     }
    }
 
+  Future<UserCredential> signUpWithGoogle() async {
+    final googleAccount = await googleSignIn.signIn();
+    if (googleAccount == null) {
+      isSigningIn = false;
+      return null;
+    }
+    else {
+      final googleAuth = await googleAccount.authentication;
+      final credentials = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken
+      );
+      UserCredential user = await FirebaseAuth.instance.signInWithCredential(credentials);
+      _addUserProfile();
+
+      isSigningIn = false;
+      return user;
+    }
+  }
+
   void signOut() async {
     // await googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future _addUserProfile() async {
+    final uid = _firebaseAuth.currentUser.uid;
+
+    await repository.save(uid, UserDto('', '', '', null, null));
   }
 }

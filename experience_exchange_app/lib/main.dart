@@ -52,24 +52,29 @@ class HomePage extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
-      if (firebaseUser.displayName == null)
-        return EditProfilePage();
+      // return EditProfilePage();
       return new Scaffold(
-        body: Column(
+        body: Container(
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
+            child: Stack(
+                children: <Widget>[
+            Container(
+        child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-          Spacer(),
-          // CircularProfileAvatar(
-          //   "",
-          //   child: ClipOval(child: Text(firebaseUser.photoURL)),
-          // ),
+
           Text("Welcome ${firebaseUser.displayName}"),
           ElevatedButton(child: Text("Logout"), onPressed: () {
             GoogleSignIn().disconnect();
             FirebaseAuth.instance.signOut();
             },),
-          Spacer()
         ])
+        )
+      ]
+    ))
       );
     }
     else return SignInPage();

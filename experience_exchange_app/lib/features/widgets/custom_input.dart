@@ -8,8 +8,12 @@ class CustomInput extends StatefulWidget{
   bool obscureText;
   String label;
   Function validator;
+  String originalText;
 
-  CustomInput({this.label, this.validator, this.obscureText = false}) { _textEditingController = TextEditingController(); }
+  CustomInput({this.label, this.validator, this.obscureText = false, this.originalText = ''}) {
+    _textEditingController = TextEditingController();
+    _textEditingController.text = originalText;
+  }
 
   String get text { return this._textEditingController.text; }
   TextEditingController get textEditingController { return this._textEditingController; }
