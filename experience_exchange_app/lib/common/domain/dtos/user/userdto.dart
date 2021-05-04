@@ -6,11 +6,11 @@ part 'userdto.g.dart';
 class UserDto{
   UserDto(this.firstName, this.lastName, this.location, this.dateOfBirth, this.photoUrl);
 
-  String firstName;
-  String lastName;
-  String location;
-  DateTime dateOfBirth;
-  String photoUrl;
+  final String firstName;
+  final String lastName;
+  final String location;
+  final DateTime dateOfBirth;
+  final String photoUrl;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

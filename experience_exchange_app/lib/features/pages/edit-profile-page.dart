@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
-import 'package:experience_exchange_app/common/domain/dtos/userdto.dart';
+import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/domain/dtos/user/userdto.dart';
+import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom_input.dart';
 import 'package:experience_exchange_app/features/widgets/date_input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
-import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +40,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
   UserDto user;
 
+  UserService _userService;
+
   EditProfilePageState({this.user}) {
     if (this.user == null)
       this.user = UserDto('', '', '', DateTime.now(), '');
@@ -52,6 +54,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    _userService = Provider.of<UserService>(context);
+
     return Scaffold(
         appBar: null,
         // key: _pageKey,
@@ -95,14 +99,19 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   _saveUser(BuildContext context) async {
-    final provider = Provider.of<UserService>(context, listen: false);
     // provider.getById(provider.currentUser.uid);
 
     String firebaseUrl = await _uploadImage();
 
     user = new UserDto(firstNameInput.text, lastNameInput.text, locationInput.text, DateTime.tryParse(dateInput.text), firebaseUrl);
 
-    provider.updateUserProfile(user);
+    _userService.updateUserProfile(user);
+
+    Navigator.push(context,
+        MaterialPageRoute(
+            builder: (context) {
+              return ProfilePage(user: _userService.currentUser);
+            }));
   }
 
   _setImage() async {

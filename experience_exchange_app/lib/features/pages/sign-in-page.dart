@@ -73,7 +73,7 @@ class SignInPageState extends State<SignInPage> {
                                     TextButton(
                                         child: Text("Sign Up"),
                                         onPressed: () async {
-                                          await Navigator.push(context,
+                                          await Navigator.pushReplacement(context,
                                               MaterialPageRoute(
                                                   builder: (context) {
                                                     return SignUpPage();
@@ -106,7 +106,6 @@ class SignInPageState extends State<SignInPage> {
       _showSnackBar(context, "Please enter a valid password");
       return;
     }
-
 
     final provider = Provider.of<AuthenticationService>(context, listen: false);
     try {
