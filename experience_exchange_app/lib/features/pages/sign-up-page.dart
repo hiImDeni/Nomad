@@ -56,12 +56,12 @@ class SignUpPageState extends State<SignUpPage> {
                                     color: Scheme.mainColor, fontSize: 30)),
                                 emailInput,
                                 passwordInput,
-                                MainButton(text: "Sign Up", action: () => _signUp(context)),
+                                MainButton(text: "Sign Up", action: () async => _signUp(context)),
                                 Container(
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: Text("OR", style: TextStyle(fontSize: 18)),
                                 ),
-                                GoogleSignInButton(action: () => _googleSignIn(context)),
+                                GoogleSignInButton(action: () async => _googleSignIn(context)),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

@@ -64,7 +64,7 @@ class SignInPageState extends State<SignInPage> {
                                 MainButton(text: "Sign In",
                                     action: () => _signIn(context)),
                                 GoogleSignInButton(
-                                  action: () => _googleSignIn(context),),
+                                  action: () async => _googleSignIn(context),),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

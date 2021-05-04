@@ -2,7 +2,6 @@ import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/features/pages/create-post-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
-import 'package:experience_exchange_app/features/pages/template-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
@@ -15,6 +14,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'logic/services/post-service.dart';
 
 
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       // Provider<AuthenticationService>(create: (_) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => UserService()),
+      ChangeNotifierProvider(create: (context) => PostService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
@@ -77,8 +79,14 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
     return Scaffold(
       appBar: null,
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: SingleChildScrollView(child:
+        Container(
+          height: MediaQuery
+              .of(context).size.height,
+          child: Center(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+        )
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

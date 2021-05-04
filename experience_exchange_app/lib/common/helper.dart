@@ -9,7 +9,7 @@ class Helper {
   static Future<String> uploadImage(File imageFile) async {
     Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('/images').child(imageFile.path.split('/').last);
     TaskSnapshot snapshot = await firebaseStorageRef.putFile(imageFile);
-    return snapshot.ref.getDownloadURL();
+    return await snapshot.ref.getDownloadURL();
   }
 
   static Future<File> selectImage() async {
