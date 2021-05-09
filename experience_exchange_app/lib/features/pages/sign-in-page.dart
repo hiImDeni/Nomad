@@ -95,6 +95,7 @@ class SignInPageState extends State<SignInPage> {
   }
 
   _signIn(BuildContext context) async {
+    //TODO: show snackbar if invalid password
     String email = emailInput.text;
     String password = passwordInput.text;
 

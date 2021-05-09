@@ -18,9 +18,10 @@ class UserRepository {
   Future<UserDto> getById(String uid) async{
     var snapshot = await _dbReference.child('/users/$uid').once();
     Map<String, dynamic> json = Map<String, dynamic>();
-    var user = snapshot.value.foreach((key, value) {
-      json.addEntries([MapEntry(key, value)]);
-    });
-    return UserDto.fromJson(json);
+    // var user = snapshot.value.foreach((key, value) {
+    //   json.addEntries([MapEntry(key, value)]);
+    // });
+    var value = await snapshot.value;
+    return UserDto.fromJson(value); //?
   }
 }

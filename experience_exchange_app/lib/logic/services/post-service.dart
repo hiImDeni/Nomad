@@ -8,4 +8,8 @@ class PostService extends ChangeNotifier {
   createPost(PostDto post) async {
     await _postRepository.save(post);
   }
+
+  Future<List<PostDto>> getByUid(String uid) async {
+    await _postRepository.getByUid(uid).then((value) { return value; });
+  }
 }
