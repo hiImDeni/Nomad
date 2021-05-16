@@ -1,5 +1,5 @@
 import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/domain/dtos/user/userdto.dart';
-import 'package:experience_exchange_app/common/domain/repository/user_repository.dart';
+import 'package:experience_exchange_app/common/domain/repository/user-repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 

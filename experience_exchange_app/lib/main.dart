@@ -4,6 +4,7 @@ import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:experience_exchange_app/logic/services/upvote-repository.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       ChangeNotifierProvider(create: (context) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => UserService()),
       ChangeNotifierProvider(create: (context) => PostService()),
+      ChangeNotifierProvider(create: (context) => UpvoteService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
@@ -42,7 +44,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: Scheme.mainColor,
           // primaryColor: Scheme.mainColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
-          unselectedWidgetColor: Scheme.inactiveColor
+          unselectedWidgetColor: Scheme.inactiveColor,
+          scaffoldBackgroundColor: Scheme.backgroundColor,
         ),
         home: MyStatefulWidget(),
       ),
@@ -78,9 +81,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       return SignInPage();
 
     return Scaffold(
-      appBar: null,
+      appBar: AppBar(
+        title: Text('Welcome')
+      ),
       body: SingleChildScrollView(child:
         Container(
+          margin: EdgeInsets.only(left: 15, right: 15),
           height: MediaQuery
               .of(context).size.height,
           child: Center(
