@@ -68,8 +68,9 @@ class ProfilePageState extends State<ProfilePage> {
             Title(color: Colors.black, child: Text(user.displayName, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),)),
           ),
 
+
           StreamBuilder (
-            stream: FirebaseDatabase.instance.reference().child('/posts/').orderByChild('uid').equalTo(_userService.currentUser.uid).onValue,
+            stream: _postService.getByUid(_userService.currentUser.uid),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text(snapshot.error.toString());
@@ -80,23 +81,25 @@ class ProfilePageState extends State<ProfilePage> {
                 Map data = snapshot.data.snapshot.value;
                 List posts = [];
 
-                data.forEach(
-                (index, data) => posts.add({"key": index, ...data}));
+                if (data != null) {
+                  data.forEach(
+                          (index, data) => posts.add({"key": index, ...data}));
+                }
 
                 return Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics: BouncingScrollPhysics(),
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
                       // return ListTile(
                       PostDto post = PostDto(
-                          // posts[index]['postId'],
+                          posts[index]['postId'],
                           posts[index]['uid'],
                           posts[index]['mediaUrl'],
                           posts[index]['text'],
                           posts[index]['upvotes'],
-                          // posts[index]['upvoteDtos']
+                          posts[index]['upvoteDtos'] != null ? posts[index]['upvoteDtos'] : []
                       );
                       return Post(post: post);
                   },),

@@ -8,16 +8,16 @@ part of 'postdto.dart';
 
 PostDto _$PostDtoFromJson(Map<String, dynamic> json) {
   return PostDto(
+    json['postId'] as String,
     json['uid'] as String,
     json['mediaUrl'] as String,
     json['text'] as String,
     json['upvotes'] as int,
-  )
-    ..postId = json['postId'] as String
-    ..upvotesDtos = (json['upvotesDtos'] as List)
+    (json['upvotesDtos'] as List)
         ?.map((e) =>
             e == null ? null : UpvoteDto.fromJson(e as Map<String, dynamic>))
-        ?.toList();
+        ?.toList(),
+  );
 }
 
 Map<String, dynamic> _$PostDtoToJson(PostDto instance) => <String, dynamic>{

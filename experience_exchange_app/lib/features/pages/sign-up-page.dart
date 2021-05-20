@@ -2,11 +2,12 @@ import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/f
 import 'package:experience_exchange_app/common/domain/validators/validators.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/sign-in-page.dart';
-import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/features/widgets/password-input.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:experience_exchange_app/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -56,12 +57,12 @@ class SignUpPageState extends State<SignUpPage> {
                                     color: Scheme.mainColor, fontSize: 30)),
                                 emailInput,
                                 passwordInput,
-                                MainButton(text: "Sign Up", action: () async => _signUp(context)),
+                                MainButton(text: "Sign Up", action: () async { await _signUp(context); }),
                                 Container(
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: Text("OR", style: TextStyle(fontSize: 18)),
                                 ),
-                                GoogleSignInButton(action: () async => _googleSignIn(context)),
+                                GoogleSignInButton(action: () async => _googleSignUp(context)),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -87,9 +88,9 @@ class SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void _signUp(BuildContext context) async {
+  _signUp(BuildContext context) async {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
-    provider.signInWithGoogle();
+    // provider.signInWithGoogle();
 
     String email = emailInput.text;
     String password = passwordInput.text;
@@ -97,7 +98,7 @@ class SignUpPageState extends State<SignUpPage> {
     if (validateEmail(email) && validatePassword(password)) {
       try {
         final provider = Provider.of<AuthenticationService>(context, listen: false);
-        final currentUser = provider.signUp(email: emailInput.text, password: passwordInput.text);
+        final currentUser = await provider.signUp(email: emailInput.text, password: passwordInput.text);
 
         if (currentUser == null) {
           log.e("unable to sign up");
@@ -117,8 +118,13 @@ class SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  _googleSignIn(BuildContext context) {
+  _googleSignUp(BuildContext context) async {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
-    provider.signUpWithGoogle();
+    await provider.signUpWithGoogle();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
   }
 }

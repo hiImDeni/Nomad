@@ -1,16 +1,15 @@
 import 'dart:io';
 
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
-import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/domain/dtos/user/userdto.dart';
-import 'package:experience_exchange_app/features/pages/profile-page.dart';
-import 'package:experience_exchange_app/features/widgets/custom_input.dart';
-import 'package:experience_exchange_app/features/widgets/date_input.dart';
+import 'package:experience_exchange_app/common/helper.dart';
+import '../../main.dart';
+import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
+import 'package:experience_exchange_app/features/widgets/custom-input.dart';
+import 'package:experience_exchange_app/features/widgets/date-input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -45,11 +44,18 @@ class EditProfilePageState extends State<EditProfilePage> {
   EditProfilePageState({this.user}) {
     if (this.user == null)
       this.user = UserDto('', '', '', DateTime.now(), '');
+    else {
+      _currentImage = Image.network(user.photoUrl);
+    }
 
     firstNameInput = CustomInput(label: 'First Name', originalText: user.firstName);
     lastNameInput = CustomInput(label: 'Last Name', originalText: user.lastName,);
     locationInput = CustomInput(label: 'Location', originalText: user.location,);
-    dateInput =  DateInput(label: 'Date of Birth', originalDate: user.dateOfBirth);
+
+    if (user.dateOfBirth != null)
+      dateInput =  DateInput(label: 'Date of Birth', originalDate: user.dateOfBirth);
+    else
+      dateInput =  DateInput(label: 'Date of Birth', originalDate: DateTime.now());
   }
 
   @override
@@ -78,7 +84,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 CircularProfileAvatar(
                                   "",
                                     child: ClipOval(child: _currentImage),
-                                    onTap: () async => await _setImage(),
+                                    onTap: () async {await _setImage();},
                                 ),
                                 firstNameInput,
                                 lastNameInput,
@@ -101,44 +107,34 @@ class EditProfilePageState extends State<EditProfilePage> {
   _saveUser(BuildContext context) async {
     // provider.getById(provider.currentUser.uid);
 
-    String firebaseUrl = await _uploadImage();
+    String firebaseUrl;
+    if (_imageFile != null) {
+     firebaseUrl = await Helper.uploadImage(_imageFile);
+     user.photoUrl = firebaseUrl;
+    }
+    user.firstName = firstNameInput.text;
+    user.lastName = lastNameInput.text;
+    user.location = locationInput.text;
+    user.dateOfBirth = DateTime.tryParse(dateInput.text);
 
-    user = new UserDto(firstNameInput.text, lastNameInput.text, locationInput.text, DateTime.tryParse(dateInput.text), firebaseUrl);
+    // user = new UserDto(firstNameInput.text, lastNameInput.text, locationInput.text, DateTime.tryParse(dateInput.text), firebaseUrl);
 
-    _userService.updateUserProfile(user);
+    await _userService.updateUserProfile(user);
 
+    // Navigator.pop(context);
     Navigator.push(context,
         MaterialPageRoute(
             builder: (context) {
-              return ProfilePage(user: _userService.currentUser);
+              return HomePage();
             }));
   }
 
   _setImage() async {
-    File selectedImage = await _selectImage();
-    _imageFile = await _cropImage(selectedImage);
+    File selectedImage = await Helper.selectImage();
+    _imageFile = await Helper.cropImage(selectedImage);
 
     setState(() {
       _currentImage = Image.file(_imageFile);
     });
-  }
-
-  Future<String> _uploadImage() async {
-    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('/images').child(_imageFile.path.split('/').last);
-    TaskSnapshot snapshot = await firebaseStorageRef.putFile(_imageFile);
-    return snapshot.ref.getDownloadURL();
-  }
-
-  Future<File> _selectImage() async {
-    final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
-    return File(pickedFile.path);
-  }
-
-  Future<File> _cropImage(File selectedImage) async {
-    return await ImageCropper.cropImage(
-      sourcePath: selectedImage.path,
-      maxWidth: 1080,
-      maxHeight: 1080,
-    );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
+import 'package:experience_exchange_app/common/domain/dtos/upvote/upvotedto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
+import 'package:experience_exchange_app/logic/services/post-service.dart';
 import 'package:experience_exchange_app/logic/services/upvote-repository.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +24,7 @@ class PostState extends State<Post> {
   PostDto post;
   UserService _userService;
   UpvoteService _upvoteService;
+  PostService _postService;
   bool isUpvoted;
 
   Icon _upvoteIcon;
@@ -38,6 +41,7 @@ class PostState extends State<Post> {
   Widget build(BuildContext context) {
     _userService = Provider.of<UserService>(context);
     _upvoteService = Provider.of<UpvoteService>(context);
+    _postService = Provider.of<PostService>(context);
 
     return Card(
       child:
@@ -62,7 +66,7 @@ class PostState extends State<Post> {
                   Column(
                     children: [
                      Padding(padding: EdgeInsets.only(left: 10), child:
-                          Text(user.firstName + " " + user.lastName, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                          Text(user.firstName + " " + user.lastName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                      ),
                       // Padding(padding: EdgeInsets.only(left: 15), child:
                       //   Text(user.location, style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal))
@@ -94,7 +98,7 @@ class PostState extends State<Post> {
                     //       return IconButton(icon: Icon(Icons.favorite_outline_rounded),
                     //         onPressed: _upvote(),);
                     //     }),
-                    IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: _upvote(),),
+                    IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: () async { await _upvote(); },),
                     Text(post.upvotes.toString()),
                   ],
                 )],
@@ -116,7 +120,10 @@ class PostState extends State<Post> {
     );
   }
 
-  _upvote() {
+  _upvote() async {
+    post.upvotesDtos.add(UpvoteDto(post.postId, _userService.currentUser.uid));
+    post.upvotes += 1;
+    await _postService.update(post);
 
   }
 

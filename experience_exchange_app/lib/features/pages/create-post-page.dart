@@ -125,12 +125,12 @@ class CreatePostPageState extends State<CreatePostPage> {
 
     if (mediaUrl != '' || controller.text != '') {
       PostDto post = PostDto(
-          // null,
+          '',
           uid,
           mediaUrl,
           controller.text,
           0,
-          // []
+          []
       );
       await _postService.createPost(post);
       _showSnackBar(context, 'Post successfully created');

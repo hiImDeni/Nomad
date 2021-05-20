@@ -1,44 +1,39 @@
-import 'package:experience_exchange_app/features/widgets/custom_input.dart';
+import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:flutter/material.dart';
 
 import '../scheme.dart';
 
 class PasswordInput extends StatefulWidget{
-  TextEditingController _textEditingController;
-  String get text { return this._textEditingController.text; }
+  TextEditingController textEditingController;
+  String get text { return this.textEditingController.text; }
 
   bool obscureText;
   String label;
   Function validator;
 
-  PasswordInput({this.label, this.validator, this.obscureText = true}) { _textEditingController = TextEditingController(); }
+  PasswordInput({this.label, this.validator, this.obscureText = true}) { textEditingController = TextEditingController(); }
 
   @override
   State<StatefulWidget> createState() {
-    return PasswordInputState(label: label, validator: validator, obscureText: obscureText, textEditingController: _textEditingController);
+    return PasswordInputState();
   }
 }
 
 class PasswordInputState extends State<PasswordInput> {
-  TextEditingController textEditingController;
-
-  bool obscureText;
-  String label;
-  Function validator;
 
   Color _currentColor = Scheme.inactiveColor;
   Color _nextColor = Scheme.mainColor;
 
-  PasswordInputState({this.label, this.validator, this.obscureText, this.textEditingController}) {}
+  PasswordInputState();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(top: 30.0, left: 40.0, right: 40.0),
         child:TextField(
-          controller: textEditingController,
+          controller: widget.textEditingController,
 
-          decoration: InputDecoration(labelText: label,
+          decoration: InputDecoration(labelText: widget.label,
             contentPadding: EdgeInsets.only(
                 bottom: 20,
                 left: 15,
@@ -52,14 +47,14 @@ class PasswordInputState extends State<PasswordInput> {
             ),
             suffixIcon: IconButton(icon: Icon(Icons.visibility, color: _currentColor),
               onPressed: () => { setState(() {
-                obscureText = !obscureText;
+                widget.obscureText = !widget.obscureText;
                 Color auxColor = _nextColor;
                 _nextColor = _currentColor;
                 _currentColor = auxColor;
               }) } ,
             ),
           ),
-          obscureText: obscureText,
+          obscureText: widget.obscureText,
         )
     );
   }

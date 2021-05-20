@@ -1,4 +1,5 @@
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:experience_exchange_app/features/pages/chats-page.dart';
 import 'package:experience_exchange_app/features/pages/create-post-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
@@ -8,6 +9,7 @@ import 'package:experience_exchange_app/logic/services/upvote-repository.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'common/domain/dtos/user/userdto.dart';
 import 'common/helper.dart';
 import 'features/pages/newsfeed-page.dart';
 import 'features/pages/sign-in-page.dart';
@@ -16,6 +18,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'logic/services/chat-service.dart';
 import 'logic/services/post-service.dart';
 
 
@@ -35,6 +38,7 @@ class MyApp extends StatelessWidget {
       ChangeNotifierProvider(create: (context) => UserService()),
       ChangeNotifierProvider(create: (context) => PostService()),
       ChangeNotifierProvider(create: (context) => UpvoteService()),
+      ChangeNotifierProvider(create: (context) => ChatService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
@@ -47,21 +51,21 @@ class MyApp extends StatelessWidget {
           unselectedWidgetColor: Scheme.inactiveColor,
           scaffoldBackgroundColor: Scheme.backgroundColor,
         ),
-        home: MyStatefulWidget(),
+        home: HomePage(),
       ),
     );
   }
 }
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key key}) : super(key: key);
 
   @override
-  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+  _HomePageState createState() => _HomePageState();
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -83,6 +87,38 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Welcome')
+      ),
+      drawer: Drawer(child:
+      ListView(
+        // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            // decoration: BoxDecoration(
+            //   color: Colors.blue,
+            // ),
+            child: Text('Menu'),
+          ),
+          ListTile(
+            title: Text('Edit Profile'),
+            onTap: () async {
+              await _goToEditProfile(firebaseUser);
+            },
+          ),
+          ListTile(
+            title: Text('Chats'),
+            onTap: () async { _gotToChats(); },
+          ),
+          Spacer(),
+          ListTile(
+            title: Text('Sign out'),
+            onTap: () {
+              Navigator.pop(context);
+              AuthenticationService().signOut();
+            },
+          ),
+        ],
+      ),
       ),
       body: SingleChildScrollView(child:
         Container(
@@ -114,5 +150,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  _goToEditProfile(User firebaseUser) async {
+    Navigator.pop(context);
+    UserService service = Provider.of<UserService>(context, listen: false);
+    var currentUser = await service.getById(firebaseUser.uid);
+    Navigator.push(context, MaterialPageRoute(builder: (context) { return EditProfilePage(user: currentUser); }));
+  }
+
+  _gotToChats() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) { return ChatsPage(); }));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
+import 'package:experience_exchange_app/common/domain/dtos/upvote/upvotedto.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class PostRepository {
@@ -21,31 +22,39 @@ class PostRepository {
 
   save(PostDto post) async {
     String postId =  _dbReference.child('/posts/').push().key;
-    await _dbReference.child('/posts/$postId').set(post.toJson()).then((value) {
-      post.postId = postId;
-      posts.add(post);
-    });
+    post.postId = postId;
+    return await _dbReference.child('/posts/$postId').set(post.toJson());
   }
 
-  Future<List<PostDto>> getByUid(String uid) async {
-    var queryResult = await _dbReference.child('/posts/').orderByChild('uid').equalTo(uid).once().then((result) {
-      List<PostDto> posts = <PostDto>[];
-      Map<dynamic, dynamic> postsModel = result.value;
-
-      postsModel.forEach((key, value) {
-        if (value['uid'] == uid) {
-          PostDto postDto = PostDto(
-              // key,
-              value['uid'],
-              value['mediaUrl'],
-              value['text'],
-              // value['upvotes'],
-              value['upvoteDtos']);
-          posts.add(postDto);
-        }
-      });
-
-      return posts;//.where((post) => post.uid == uid);
-    });
+  update(PostDto post) async {
+    return await _dbReference.child('/posts/${post.postId}').set(post.toJson());
   }
+
+  upvote(String postId, UpvoteDto upvote) async {
+    String upvoteId = _dbReference.child('posts/$postId.upvoteDtos').push().key;
+    return await _dbReference.child('posts/$postId.upvoteDtos/$upvoteId').set(upvote.toJson());
+  }
+
+  Stream getByUid(String uid) => FirebaseDatabase.instance.reference().child('/posts/').orderByChild('uid').equalTo(uid).onValue;
+  // async {
+  //   var queryResult = await _dbReference.child('/posts/').orderByChild('uid').equalTo(uid).once().then((result) {
+  //     List<PostDto> posts = <PostDto>[];
+  //     Map<dynamic, dynamic> postsModel = result.value;
+  //
+  //     postsModel.forEach((key, value) {
+  //       if (value['uid'] == uid) {
+  //         PostDto postDto = PostDto(
+  //             key,
+  //             value['uid'],
+  //             value['mediaUrl'],
+  //             value['text'],
+  //             value['upvotes'],
+  //             value['upvoteDtos']);
+  //         posts.add(postDto);
+  //       }
+  //     });
+  //
+  //     return posts;//.where((post) => post.uid == uid);
+  //   });
+  // }
 }

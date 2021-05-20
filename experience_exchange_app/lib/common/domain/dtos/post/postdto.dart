@@ -12,7 +12,7 @@ class PostDto {
   int upvotes;
   List<UpvoteDto> upvotesDtos; //?
 
-  PostDto(this.uid, this.mediaUrl, this.text, this.upvotes);
+  PostDto(this.postId, this.uid, this.mediaUrl, this.text, this.upvotes, this.upvotesDtos);
 
   factory PostDto.fromJson(Map<String, dynamic> json) => _$PostDtoFromJson(json);
 

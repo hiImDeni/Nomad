@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/domain/dtos/user/userdto.dart';
+import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:experience_exchange_app/common/domain/repository/user-repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -64,21 +63,27 @@ class AuthenticationService extends ChangeNotifier {
           idToken: googleAuth.idToken
       );
       UserCredential user = await FirebaseAuth.instance.signInWithCredential(credentials);
-      _addUserProfile();
-
+      await _addUserProfile();
       isSigningIn = false;
       return user;
     }
   }
 
   void signOut() async {
-    // await googleSignIn.disconnect();
+    if ( _firebaseAuth.currentUser.providerData.length == 2) {
+      print(_firebaseAuth.currentUser.providerData[1].providerId);
+      if (_firebaseAuth.currentUser.providerData[1].providerId == 'google.com' )
+        await googleSignIn.disconnect();
+    }
+    print(_firebaseAuth.currentUser.providerData[0].providerId);
+
     await FirebaseAuth.instance.signOut();
   }
 
   Future _addUserProfile() async {
     final uid = _firebaseAuth.currentUser.uid;
+    final name = _firebaseAuth.currentUser.displayName.split(' ');
 
-    await repository.save(uid, UserDto('', '', '', null, null));
+    await repository.save(uid, UserDto(name[0], name[1], '', DateTime(2000, 1, 1), _firebaseAuth.currentUser.photoURL));
   }
 }
