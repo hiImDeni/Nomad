@@ -21,4 +21,6 @@ class ChatService extends ChangeNotifier {
   addMessage(String chatId, MessageDto message) async {
     return await _chatRepository.addMessage(chatId, message);
   }
+
+  Stream getMessages(String chatId) => _chatRepository.getMessages(chatId);
 }

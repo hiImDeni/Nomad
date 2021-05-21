@@ -1,60 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/upvote/upvotedto.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class PostRepository {
-  var _dbReference = FirebaseDatabase.instance.reference();
-  List<PostDto> posts = [];
-
-  // _initializeData() async {
-  //   await _dbReference.child('/posts/').then((result) {
-  //     Map<dynamic, dynamic> postsModel = result.value;
-  //     postsModel;
-  //
-  //     postsModel.forEach((key, value) {
-  //       // var post
-  //       // var value = post;
-  //
-  //       PostDto postDto = PostDto(key, value['uid'], value['mediaUrl'], value['text'], value['upvotes'], value['upvoteDtos']);
-  //       posts.add(postDto);
-  //     });
-  // }
+  // var _dbReference = FirebaseDatabase.instance.reference();
+  var _dbReference = FirebaseFirestore.instance.collection('posts');
 
   save(PostDto post) async {
-    String postId =  _dbReference.child('/posts/').push().key;
-    post.postId = postId;
-    return await _dbReference.child('/posts/$postId').set(post.toJson());
+    String key = _dbReference.doc().id;
+    post.postId = key;
+    await _dbReference.doc(key).set(post.toJson());
+    // post.postId = postId;
+    // return await _dbReference.child('/posts/$postId').set(post.toJson());
   }
 
-  update(PostDto post) async {
-    return await _dbReference.child('/posts/${post.postId}').set(post.toJson());
+  Stream getByUid(String uid) => _dbReference.where('uid', isEqualTo: uid).snapshots();
+
+  upvote(String postId, String uid) async {
+    await _dbReference.doc(postId).collection('upvoteDtos').doc(uid).set({});
+    await _dbReference.doc(postId).update({'upvotes': FieldValue.increment(1)});
   }
 
-  upvote(String postId, UpvoteDto upvote) async {
-    String upvoteId = _dbReference.child('posts/$postId.upvoteDtos').push().key;
-    return await _dbReference.child('posts/$postId.upvoteDtos/$upvoteId').set(upvote.toJson());
+  unvote(String postId, String uid) async {
+    await _dbReference.doc(postId).collection('upvoteDtos').doc(uid).delete();
+    await _dbReference.doc(postId).update({'upvotes': FieldValue.increment(-1)}); //?
   }
 
-  Stream getByUid(String uid) => FirebaseDatabase.instance.reference().child('/posts/').orderByChild('uid').equalTo(uid).onValue;
-  // async {
-  //   var queryResult = await _dbReference.child('/posts/').orderByChild('uid').equalTo(uid).once().then((result) {
-  //     List<PostDto> posts = <PostDto>[];
-  //     Map<dynamic, dynamic> postsModel = result.value;
-  //
-  //     postsModel.forEach((key, value) {
-  //       if (value['uid'] == uid) {
-  //         PostDto postDto = PostDto(
-  //             key,
-  //             value['uid'],
-  //             value['mediaUrl'],
-  //             value['text'],
-  //             value['upvotes'],
-  //             value['upvoteDtos']);
-  //         posts.add(postDto);
-  //       }
-  //     });
-  //
-  //     return posts;//.where((post) => post.uid == uid);
-  //   });
-  // }
+  Future<bool> isUpvoted(String postId, String uid) async {
+    return _dbReference.doc(postId).collection('upvoteDtos').doc(uid).get() != null; //?
+  }
 }

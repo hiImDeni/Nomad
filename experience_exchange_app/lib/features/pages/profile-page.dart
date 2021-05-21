@@ -69,8 +69,9 @@ class ProfilePageState extends State<ProfilePage> {
           ),
 
 
-          StreamBuilder (
-            stream: _postService.getByUid(_userService.currentUser.uid),
+          Expanded(
+            child: StreamBuilder (
+            stream: FirebaseFirestore.instance.collection('posts').snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text(snapshot.error.toString());
@@ -78,38 +79,31 @@ class ProfilePageState extends State<ProfilePage> {
 
               if (snapshot.hasData)
               {
-                Map data = snapshot.data.snapshot.value;
                 List posts = [];
 
-                if (data != null) {
-                  data.forEach(
-                          (index, data) => posts.add({"key": index, ...data}));
-                }
+                snapshot.data.docs.forEach((doc) {
+                  posts.add(PostDto(doc.data()['postId'], doc.data()['uid'], doc.data()['mediaUrl'], doc.data()['text'], doc.data()['upvotes'], doc.data()['upvoteDtos']));
+                });
 
-                return Expanded(
-                  child: ListView.builder(
+                return ListView.builder(
                     shrinkWrap: true,
                     physics: BouncingScrollPhysics(),
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
-                      // return ListTile(
-                      PostDto post = PostDto(
-                          posts[index]['postId'],
-                          posts[index]['uid'],
-                          posts[index]['mediaUrl'],
-                          posts[index]['text'],
-                          posts[index]['upvotes'],
-                          posts[index]['upvoteDtos'] != null ? posts[index]['upvoteDtos'] : []
-                      );
-                      return Post(post: post);
-                  },),
+                      if (index == posts.length-1) {
+                        return Padding(padding: EdgeInsets.only(bottom: 30),
+                            child: Post(post: posts[index])
+                        );
+                      }
+
+                      return Post(post: posts[index]);
+                  },
                 );
               }
-              else {
-                return CircularProgressIndicator();
-              }
+
+              return CircularProgressIndicator();
             },
-          ),
+          ),)
         ],
     );
   }

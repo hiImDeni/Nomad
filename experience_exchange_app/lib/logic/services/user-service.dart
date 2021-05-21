@@ -35,4 +35,6 @@ class UserService extends ChangeNotifier {
       return value;
     });
   }
+
+  Stream getUsers() => repository.getUsers();
 }

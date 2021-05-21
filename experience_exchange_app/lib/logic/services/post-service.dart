@@ -11,7 +11,7 @@ class PostService extends ChangeNotifier {
 
   Stream getByUid(String uid) => _postRepository.getByUid(uid);
 
-  update(PostDto postDto) async{
-    return await _postRepository.update(postDto);
-  }
+  // update(PostDto postDto) async{
+  //   return await _postRepository.update(postDto);
+  // }
 }

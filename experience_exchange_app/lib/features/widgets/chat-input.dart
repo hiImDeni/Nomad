@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class ChatInput extends StatefulWidget {
   TextEditingController textEditingController;
+
   String get text { return this.textEditingController.text; }
+  set text(String message) { this.textEditingController.text = message; }
 
   Function action;
 
@@ -18,8 +20,9 @@ class ChatInput extends StatefulWidget {
 class ChatInputState extends State<ChatInput> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(bottom: 20),
+    return Container(
+        padding: EdgeInsets.only(bottom: 5),
+        width: MediaQuery.of(context).size.width,
         child: TextField(
           textCapitalization: TextCapitalization.sentences,
           controller: widget.textEditingController,
@@ -29,9 +32,7 @@ class ChatInputState extends State<ChatInput> {
               icon: Icon(Icons.send),
               onPressed: widget.action,
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            border: InputBorder.none,
           ),
         )
     );

@@ -3,16 +3,17 @@ import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class UserRepository {
-  final FirebaseFirestore _firestoreDb = FirebaseFirestore.instance;
-  var _dbReference = FirebaseDatabase.instance.reference();
+  var _dbReference = FirebaseFirestore.instance.collection('users');
+  // FirebaseDatabase.instance.reference();
+  // final Firestore firestore;
 
   Future<void> save(String id, UserDto user) async {
-    return _dbReference.child('/users/$id').set(user.toJson());
+    return _dbReference.doc(id).set(user.toJson());
   }
 
   Future<UserDto> getById(String uid) async{
-    var snapshot = await _dbReference.child('/users/$uid').once();
-    var value = snapshot.value;
+    var snapshot = await _dbReference.doc(uid).get();
+    var value = snapshot;
     // var id = snapshot.key;
     return UserDto(value['firstName'], value['lastName'], value['location'], DateTime.tryParse(value['dateOfBirth']), value['photoUrl']); //?
   }
@@ -26,18 +27,22 @@ class UserRepository {
   }
 
   Future<String> getUid(UserDto user) async {
-    await _dbReference.child('/users').orderByChild('lastName').equalTo(user.lastName)
-      .orderByChild('firstName').equalTo(user.firstName).once().then((value) {
-        return value.key;
-    });
+    return await _dbReference
+        .where('firstName', isEqualTo: user.firstName)
+        .where('lastName', isEqualTo: user.lastName)
+        .limit(1)
+        .get().then((value) {
+          return value.docs.first.id; //????
+        });
+
   }
 
   Future<List<UserDto>> _search(List<String> criterions, String name) async{
-    _dbReference.child('users').once().then((result) {
-      var usersModel = result.value;
+    _dbReference.get().then((result) {
+      var usersModel = result.docs;
       var users = <UserDto>[];
 
-      usersModel.forEach((key, value) {
+      usersModel.forEach((value) { //todo: check
         for (var criterion in criterions) {
           var searchValue = value[criterion].toLowerCase();
           if (searchValue.startsWith(name.toLowerCase())) {
@@ -51,6 +56,7 @@ class UserRepository {
 
       return users;
     });
-
   }
+
+  Stream getUsers() => _dbReference.snapshots();
 }

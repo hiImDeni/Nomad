@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       ),
-      body: SingleChildScrollView(child:
+      body:
         Container(
           margin: EdgeInsets.only(left: 15, right: 15),
           height: MediaQuery
@@ -128,9 +128,10 @@ class _HomePageState extends State<HomePage> {
           child: Center(
             child: _widgetOptions.elementAt(_selectedIndex),
           ),
-        )
+        
       ),
       bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

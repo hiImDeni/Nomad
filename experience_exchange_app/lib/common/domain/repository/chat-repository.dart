@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/chat/chatdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/message/messagedto.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class ChatRepository{
-  var _dbReference = FirebaseDatabase.instance.reference();
+  var _dbReference = FirebaseFirestore.instance.collection('chats');
 
   Future<String> createChat(ChatDto chat) async {
-    var chatId = _dbReference.child('/chats').push().key;
-    await _dbReference.child('/chats/$chatId').set(chat.toJson()).then((value) {
+    var chatId = _dbReference.doc().id;
+    await _dbReference.doc(chatId).set(chat.toJson()).then((value) {
       return chatId;
     });
   }
@@ -20,22 +21,17 @@ class ChatRepository{
   // }
 
   Future<String> getChat(String uid1, String uid2) async {
-    var snapshot = await _dbReference.child('chats').once().then((element) {
-            var model = element.value;
-            String chatId;
-            if (model != null) {
-              model.forEach((key, value) {
-                if (value['uid1'] == uid1 && value['uid2'] == uid2) {
-                  chatId = key; //??
-                  return chatId;
-                } else if (value['uid1'] == uid2 && value['uid2'] == uid1) {
-                  chatId = key; //??
-                  return chatId;
-                }
-              });
-            }
-            return chatId;
-      });
+    var snapshot = await _dbReference.where('uid1', isEqualTo: uid1)
+        .where('uid2', isEqualTo: uid2).get();
+    if (snapshot.docs.isNotEmpty)
+      return snapshot.docs.first.id;
+
+    snapshot = await _dbReference.where('uid1', isEqualTo: uid2)
+        .where('uid2', isEqualTo: uid1).get();
+    if (snapshot.docs.isNotEmpty)
+      return snapshot.docs.first.id;
+
+    return null;
   }
 
   
@@ -45,7 +41,9 @@ class ChatRepository{
   // }
 
   addMessage(String chatId, MessageDto message) async {
-    String key = _dbReference.child('/chats/$chatId/messages').push().key;
-    return await  _dbReference.child('/chats/$chatId/messages/$key').set(message);
+    return await _dbReference.doc(chatId).collection('messages').doc().set(message.toJson());
+    // return await  _dbReference.child('/chats/$chatId/messages/$key').set(message);
   }
+
+  getMessages(String chatId) => _dbReference.doc(chatId).collection('messages').orderBy('date').snapshots();
 }

@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../scheme.dart';
 import 'chat.dart';
 
 
@@ -40,7 +41,8 @@ class ChatsPageState extends State<ChatsPage> {
       body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Container(
-            margin: EdgeInsets.only(left: 15, right: 15),
+              color: Scheme.backgroundColor,
+              margin: EdgeInsets.only(left: 15, right: 15),
             height: MediaQuery
                 .of(context).size.height,
             child: Column(
@@ -63,7 +65,7 @@ class ChatsPageState extends State<ChatsPage> {
                 _searchInput,
 
                 StreamBuilder(
-                    stream: FirebaseDatabase.instance.reference().child('/users/').onValue,
+                    stream: _userService.getUsers(),
                     builder: (context, snapshot){
                       if (snapshot.hasError) {
                         return Text(snapshot.error.toString());
@@ -71,13 +73,17 @@ class ChatsPageState extends State<ChatsPage> {
 
                       if (snapshot.hasData)
                       {
-                        Map data = snapshot.data.snapshot.value;
                         List users = [];
 
-                        if (data != null) {
-                          data.forEach(
-                                  (index, data) => users.add({"key": index, ...data}));
-                        }
+                        snapshot.data.docs.forEach((doc) {
+                          users.add([doc.id, UserDto(
+                              doc.data()['firstName'],
+                              doc.data()['lastName'],
+                              doc.data()['location'],
+                              DateTime.tryParse(doc.data()['dateOfBirth']),
+                              doc.data()['photoUrl']
+                          )]);
+                        });//??
 
                         return Expanded(
                           child: ListView.builder(
@@ -85,15 +91,8 @@ class ChatsPageState extends State<ChatsPage> {
                             physics: BouncingScrollPhysics(),
                             itemCount: users.length,
                             itemBuilder: (context, index) {
-                              UserDto user = UserDto(
-                                users[index]['firstName'],
-                                users[index]['lastName'],
-                                users[index]['location'],
-                                DateTime.tryParse(users[index]['dateOfBirth']),
-                                users[index]['photoUrl'],
-                              );
-                              return UserWidget(user: user, goToPage: () async{
-                                var uid = users[index]['key']; //?
+                              return UserWidget(user: users[index][1], goToPage: () async{
+                                var uid = users[index][0]; //?
                                 String chatId;
                                 chatId = await _chatService.getChat(firebaseUser.uid, uid).then((value) {
                                   chatId = value;
@@ -102,7 +101,7 @@ class ChatsPageState extends State<ChatsPage> {
                                 if (chatId == null)
                                   chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
                                 await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return Chat(chatId: chatId, user: user, uid2: uid,);
+                                  return Chat(chatId: chatId, user: users[index][1], uid2: uid,);
                                 }));
                               },);
                             },),

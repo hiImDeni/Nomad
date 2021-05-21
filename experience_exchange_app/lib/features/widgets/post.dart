@@ -121,9 +121,9 @@ class PostState extends State<Post> {
   }
 
   _upvote() async {
-    post.upvotesDtos.add(UpvoteDto(post.postId, _userService.currentUser.uid));
-    post.upvotes += 1;
-    await _postService.update(post);
+    // post.upvotesDtos.add(UpvoteDto(post.postId, _userService.currentUser.uid));
+    // post.upvotes += 1;
+    // await _postService.update(post);
 
   }
 
