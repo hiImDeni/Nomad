@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 class Post extends StatefulWidget {
   PostDto post;
+  bool isUpvoted;
 
   Post({ this.post });
 
@@ -25,7 +26,9 @@ class PostState extends State<Post> {
   UserService _userService;
   UpvoteService _upvoteService;
   PostService _postService;
-  bool isUpvoted;
+  int upvotes = 0;
+  bool isUpvoted = false;
+  Color iconColor = Colors.black;
 
   Icon _upvoteIcon;
 
@@ -42,6 +45,8 @@ class PostState extends State<Post> {
     _userService = Provider.of<UserService>(context);
     _upvoteService = Provider.of<UpvoteService>(context);
     _postService = Provider.of<PostService>(context);
+
+    upvotes = widget.post.upvotes;
 
     return Card(
       child:
@@ -92,14 +97,22 @@ class PostState extends State<Post> {
               children: [
                 Column( children: [Row(
                   children: [
-                    // FutureBuilder(
-                    //     future: _upvoteService.getUpvote(post.postId, uid),
-                    //     builder: (context, snapshot) {
-                    //       return IconButton(icon: Icon(Icons.favorite_outline_rounded),
-                    //         onPressed: _upvote(),);
-                    //     }),
-                    IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: () async { await _upvote(); },),
-                    Text(post.upvotes.toString()),
+                    FutureBuilder(
+                        future: _postService.isUpvoted(post.postId, _userService.currentUser.uid),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            isUpvoted = snapshot.data;
+                            iconColor = isUpvoted ? Colors.redAccent : Colors.black;
+                          }
+                          return IconButton(icon: Icon(
+                            Icons.favorite_outline_rounded,
+                            color: iconColor,),
+                            onPressed: () async {
+                              await _handleTap();
+                            },);
+                        }),
+                    // IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: () async { await _upvote(); },),
+                    Text(upvotes.toString()),
                   ],
                 )],
 
@@ -120,11 +133,31 @@ class PostState extends State<Post> {
     );
   }
 
+  _handleTap() async {
+    if (isUpvoted)
+      return await _unvote();
+    else
+      return await _upvote();
+  }
+
   _upvote() async {
     // post.upvotesDtos.add(UpvoteDto(post.postId, _userService.currentUser.uid));
     // post.upvotes += 1;
-    // await _postService.update(post);
+    setState(() {
+      upvotes = upvotes + 1;
+      isUpvoted = true;
+      iconColor = Colors.redAccent;
+    });
+    return await _postService.upvote(widget.post.postId, _userService.currentUser.uid);
+  }
 
+  _unvote() async {
+    setState(() {
+      upvotes = upvotes - 1;
+      isUpvoted = false;
+      iconColor = Colors.black;
+    });
+    return await _postService.unvote(widget.post.postId, _userService.currentUser.uid);
   }
 
   _comment() {}

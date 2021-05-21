@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
           child: Center(
             child: _widgetOptions.elementAt(_selectedIndex),
           ),
-        
+
       ),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

@@ -28,6 +28,8 @@ class PostRepository {
   }
 
   Future<bool> isUpvoted(String postId, String uid) async {
-    return _dbReference.doc(postId).collection('upvoteDtos').doc(uid).get() != null; //?
+    return _dbReference.doc(postId).collection('upvoteDtos').doc(uid).get().then((value) {
+      return value.exists;
+    });
   }
 }

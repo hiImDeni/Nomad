@@ -11,7 +11,15 @@ class PostService extends ChangeNotifier {
 
   Stream getByUid(String uid) => _postRepository.getByUid(uid);
 
-  // update(PostDto postDto) async{
-  //   return await _postRepository.update(postDto);
-  // }
+  upvote(String postId, String uid) async {
+    return await _postRepository.upvote(postId, uid);
+  }
+
+  unvote(String postId, String uid) async {
+    return await _postRepository.unvote(postId, uid);
+  }
+
+  Future<bool> isUpvoted(String postId, String uid) async{
+    return await _postRepository.isUpvoted(postId, uid);
+  }
 }

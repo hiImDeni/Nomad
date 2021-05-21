@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/chat/chatdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/message/messagedto.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class ChatRepository{
   var _dbReference = FirebaseFirestore.instance.collection('chats');
@@ -42,8 +41,12 @@ class ChatRepository{
 
   addMessage(String chatId, MessageDto message) async {
     return await _dbReference.doc(chatId).collection('messages').doc().set(message.toJson());
-    // return await  _dbReference.child('/chats/$chatId/messages/$key').set(message);
   }
 
   getMessages(String chatId) => _dbReference.doc(chatId).collection('messages').orderBy('date').snapshots();
+  
+  Stream getByUid1(String uid) => _dbReference.where('uid1', isEqualTo: uid).snapshots();
+  Stream getByUid2(String uid) => _dbReference.where('uid2', isEqualTo: uid).snapshots();
+
+  // Stream getByUid(String uid) => StreamGroup.merge()
 }
