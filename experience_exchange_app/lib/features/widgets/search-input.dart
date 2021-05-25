@@ -1,3 +1,6 @@
+import 'package:experience_exchange_app/features/pages/chat.dart';
+import 'package:experience_exchange_app/features/widgets/user.dart';
+import 'package:experience_exchange_app/logic/services/chat-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,45 +9,42 @@ import 'package:provider/provider.dart';
 import '../scheme.dart';
 
 class SearchInput extends StatefulWidget {
-  TextEditingController _textEditingController;
-  String get text { return this._textEditingController.text; }
+  TextEditingController textEditingController;
+  String get text { return this.textEditingController.text; }
 
   String label;
   Function validator;
   Function action;
 
-  SearchInput({this.label, this.validator, this.action}) { _textEditingController = TextEditingController(); }
+  SearchInput({this.label, this.validator, this.action}) { textEditingController = TextEditingController(); }
 
   @override
   State<StatefulWidget> createState() {
-    return SearchInputState(label: label, validator: validator, textEditingController: _textEditingController, action: action);
+    return SearchInputState();
   }
 
 }
 
 class SearchInputState extends State<SearchInput> {
-  TextEditingController textEditingController;
-
-  String label;
-  Function validator;
-  Function action;
-
   UserService _userService;
+  ChatService _chatService;
 
-  SearchInputState({this.label, this.validator, this.textEditingController, this.action});
+  SearchInputState();
 
   @override
   Widget build(BuildContext context) {
     _userService = Provider.of<UserService>(context);
+    _chatService = Provider.of<ChatService>(context);
 
     return
       Container(
         height: 40,
         child:
         TextField(
-          controller: textEditingController,
-
-          decoration: InputDecoration(hintText: label,
+          //todo
+        controller: widget.textEditingController,
+          onChanged: (text) => widget.action,
+          decoration: InputDecoration(hintText: widget.label,
             contentPadding: EdgeInsets.only(
                 // bottom: 20,
                 left: 20,
@@ -59,9 +59,9 @@ class SearchInputState extends State<SearchInput> {
               borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
             ),
             prefixIcon: IconButton(icon: Icon(Icons.search),
-              onPressed: () async {
-                await _search(textEditingController.text);
-              },
+              // onPressed: () async {
+              //   await _search(widget.textEditingController.text);
+              // },
             ),
           ),
         )
@@ -69,41 +69,58 @@ class SearchInputState extends State<SearchInput> {
   }
 
   _search(String text) async {
-    print('!!!!!!' + text);
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          child: FutureBuilder(
+            future: _userService.searchByName(text),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+              if (snapshot.hasData) {
+                var result = snapshot.data;
 
-    await _userService.searchByName(text).then((result){
-      showModalBottomSheet<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 400,
-            child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListView.builder(
-                    itemCount: result.length,
-                    shrinkWrap: true,
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, index){
-                      return ListTile(
-                        leading: CircleAvatar(backgroundImage: NetworkImage(result[index].photoUrl),),
-                        trailing: Text(result[index].firstName + " " + result[index].lastName),
-                      );
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('Close BottomSheet'),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
-            ),
-          ),);
-        },
-      );
-    });
+                return SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListView.builder(
+                          itemCount: result.length,
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return UserWidget(user: result[index], goToPage: () async{
+                              var uid = await _userService.getUid(result[index]);
+                              String chatId;
+                              chatId = await _chatService.getChat(_userService.currentUser.uid, uid).then((value) {
+                                chatId = value;
+                                return value;
+                              });
+                              if (chatId == null)
+                                chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return Chat(chatId: chatId, user: result[index], uid2: uid,);
+                              }));
+                            },);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: const Text('Close BottomSheet'),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    ),),);
+              }
+              return CircularProgressIndicator();
+            }
+          )
+        );
+      },
+    );
   }
 }

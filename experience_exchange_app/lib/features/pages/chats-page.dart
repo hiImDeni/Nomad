@@ -4,7 +4,6 @@ import 'package:experience_exchange_app/features/widgets/user.dart';
 import 'package:experience_exchange_app/logic/services/chat-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +25,9 @@ class ChatsPageState extends State<ChatsPage> {
   ChatService _chatService;
 
   SearchInput _searchInput;
+  Future<List<UserDto>> _usersFuture;
+
+  TextEditingController _textEditingController;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +36,8 @@ class ChatsPageState extends State<ChatsPage> {
     _userService = Provider.of<UserService>(context);
     _chatService = Provider.of<ChatService>(context);
 
-    _searchInput = SearchInput(label: 'Search user', action: () async => await searchUsers(),);
-
+    _searchInput = SearchInput(label: 'Search user', action: (text) => searchUsers(text),);
+    _textEditingController = TextEditingController();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -62,8 +64,32 @@ class ChatsPageState extends State<ChatsPage> {
                       )
                     )
                 ),
-                _searchInput,
+                Container(
+                    height: 40,
+                    child:
+                    TextField(
+                      controller: _textEditingController,
+                      onChanged: (text) { searchUsers(text); },
+                      decoration: InputDecoration(hintText: 'Search users',
+                        contentPadding: EdgeInsets.only(
+                          // bottom: 20,
+                            left: 20,
+                            right: 20
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Scheme.inputColor, width: 1.5),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
+                        ),
+                        prefixIcon: IconButton(icon: Icon(Icons.search)),
+                      ),
+                    )
+                ),
 
+                _usersFuture == null ?
                 StreamBuilder(
                     stream: _userService.getUsers(),
                     builder: (context, snapshot){
@@ -83,7 +109,7 @@ class ChatsPageState extends State<ChatsPage> {
                               DateTime.tryParse(doc.data()['dateOfBirth']),
                               doc.data()['photoUrl']
                           )]);
-                        });//??
+                        });
 
                         return Expanded(
                           child: ListView.builder(
@@ -109,7 +135,43 @@ class ChatsPageState extends State<ChatsPage> {
                       }
 
                       return CircularProgressIndicator();
-                    }),
+                    }) :
+                FutureBuilder(
+                    future: _usersFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      }
+                      if (snapshot.hasData) {
+                        var result = snapshot.data;
+
+                        return Expanded(
+                          child:
+                                ListView.builder(
+                                  itemCount: result.length,
+                                  shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return UserWidget(user: result[index], goToPage: () async{
+                                      var uid = await _userService.getUid(result[index]);
+                                      String chatId;
+                                      chatId = await _chatService.getChat(_userService.currentUser.uid, uid).then((value) {
+                                        chatId = value;
+                                        return value;
+                                      });
+                                      if (chatId == null)
+                                        chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
+                                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return Chat(chatId: chatId, user: result[index], uid2: uid,);
+                                      }));
+                                    },);
+                                  },
+                                ),
+                            );
+                      }
+                      return CircularProgressIndicator();
+                    }
+                ),
               ],
             )
         )
@@ -117,7 +179,14 @@ class ChatsPageState extends State<ChatsPage> {
     );
   }
 
-  Future searchUsers() async{
-    return await _userService.searchByName(_searchInput.text);
+  searchUsers(String text) async{
+    // var users =  _userService.searchByName(_searchInput.text);
+    setState(() {
+      if (text != '') {
+        _usersFuture = _userService.searchByName(text);
+      }  else {
+        _usersFuture = null;
+      }
+    });
   }
 }

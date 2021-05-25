@@ -34,7 +34,6 @@ class SignInPageState extends State<SignInPage> {
   //TODO: fix keys??
   // final _formPageKey = GlobalKey<FormState>();
   // final _pageKey = GlobalKey<ScaffoldState>();
-  final log = Logger();
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +113,6 @@ class SignInPageState extends State<SignInPage> {
           email: emailInput.text, password: passwordInput.text);
 
       if (currentUser == null) {
-        log.e("unable to log in");
         _showSnackBar(context, "Invalid username or password");
       }
     } on PlatformException catch (err) {

@@ -18,13 +18,13 @@ class UserRepository {
     return UserDto(value['firstName'], value['lastName'], value['location'], DateTime.tryParse(value['dateOfBirth']), value['photoUrl']); //?
   }
 
-  Future<List<UserDto>> searchByName(String name) async{
-    var searchByName = await _search(['lastName', 'firstName'], name).then((value) {
-      if (value == null)
-        return [];
-      return value;
-    });
-  }
+  // Future<List<UserDto>> searchByName(String name) async{
+  //   var searchByName = await _search(['lastName', 'firstName'], name).then((value) {
+  //     if (value == null)
+  //       return [];
+  //     return value;
+  //   });
+  // }
 
   Future<String> getUid(UserDto user) async {
     return await _dbReference
@@ -37,8 +37,8 @@ class UserRepository {
 
   }
 
-  Future<List<UserDto>> _search(List<String> criterions, String name) async{
-    _dbReference.get().then((result) {
+  Future<List<UserDto>> search(List<String> criterions, String name) async{
+    var result = await _dbReference.get();
       var usersModel = result.docs;
       var users = <UserDto>[];
 
@@ -53,9 +53,7 @@ class UserRepository {
           }
         }
       });
-
       return users;
-    });
   }
 
   Stream getUsers() => _dbReference.snapshots();
