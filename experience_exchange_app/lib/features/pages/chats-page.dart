@@ -17,7 +17,6 @@ class ChatsPage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return ChatsPageState();
   }
-
 }
 
 class ChatsPageState extends State<ChatsPage> {
@@ -25,9 +24,9 @@ class ChatsPageState extends State<ChatsPage> {
   ChatService _chatService;
 
   SearchInput _searchInput;
-  Future<List<UserDto>> _usersFuture;
+  Future<Map<String, UserDto>> _usersFuture;
 
-  TextEditingController _textEditingController;
+  TextEditingController _textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,6 @@ class ChatsPageState extends State<ChatsPage> {
     _chatService = Provider.of<ChatService>(context);
 
     _searchInput = SearchInput(label: 'Search user', action: (text) => searchUsers(text),);
-    _textEditingController = TextEditingController();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -90,88 +88,8 @@ class ChatsPageState extends State<ChatsPage> {
                 ),
 
                 _usersFuture == null ?
-                StreamBuilder(
-                    stream: _userService.getUsers(),
-                    builder: (context, snapshot){
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      }
-
-                      if (snapshot.hasData)
-                      {
-                        List users = [];
-
-                        snapshot.data.docs.forEach((doc) {
-                          users.add([doc.id, UserDto(
-                              doc.data()['firstName'],
-                              doc.data()['lastName'],
-                              doc.data()['location'],
-                              DateTime.tryParse(doc.data()['dateOfBirth']),
-                              doc.data()['photoUrl']
-                          )]);
-                        });
-
-                        return Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: users.length,
-                            itemBuilder: (context, index) {
-                              return UserWidget(user: users[index][1], goToPage: () async{
-                                var uid = users[index][0]; //?
-                                String chatId;
-                                chatId = await _chatService.getChat(firebaseUser.uid, uid).then((value) {
-                                  chatId = value;
-                                  return value;
-                                });
-                                if (chatId == null)
-                                  chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
-                                await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return Chat(chatId: chatId, user: users[index][1], uid2: uid,);
-                                }));
-                              },);
-                            },),
-                        );
-                      }
-
-                      return CircularProgressIndicator();
-                    }) :
-                FutureBuilder(
-                    future: _usersFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      }
-                      if (snapshot.hasData) {
-                        var result = snapshot.data;
-
-                        return Expanded(
-                          child:
-                                ListView.builder(
-                                  itemCount: result.length,
-                                  shrinkWrap: true,
-                                  physics: BouncingScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return UserWidget(user: result[index], goToPage: () async{
-                                      var uid = await _userService.getUid(result[index]);
-                                      String chatId;
-                                      chatId = await _chatService.getChat(_userService.currentUser.uid, uid).then((value) {
-                                        chatId = value;
-                                        return value;
-                                      });
-                                      if (chatId == null)
-                                        chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
-                                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                        return Chat(chatId: chatId, user: result[index], uid2: uid,);
-                                      }));
-                                    },);
-                                  },
-                                ),
-                            );
-                      }
-                      return CircularProgressIndicator();
-                    }
-                ),
+                  _showAllChats(firebaseUser.uid):
+                  _showSearchResults(),
               ],
             )
         )
@@ -188,5 +106,100 @@ class ChatsPageState extends State<ChatsPage> {
         _usersFuture = null;
       }
     });
+  }
+
+  Widget _showSearchResults() {
+    return FutureBuilder(
+        future: _usersFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          if (snapshot.hasData) {
+            var result = snapshot.data;
+            List uids = result.keys.toList();
+            List users = result.values.toList();
+
+            return Expanded(
+              child:
+              ListView.builder(
+                itemCount: result.length,
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  var user = users[index];
+                  return UserWidget(user: user, goToPage: () async{
+                    var uid = uids[index];
+
+                    String chatId;
+                    chatId = await _chatService.getChat(_userService.currentUser.uid, uid).then((value) {
+                      chatId = value;
+                      return value;
+                    });
+                    if (chatId == null)
+                      chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return Chat(chatId: chatId, user: user, uid2: uid,);
+                    }));
+                  },);
+                },
+              ),
+            );
+          }
+          return CircularProgressIndicator();
+        }
+    );
+  }
+
+  Widget _showAllChats(String currentUid) {
+    return StreamBuilder(
+        stream: _userService.getUsers(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+
+          if (snapshot.hasData) {
+            List users = [];
+
+            snapshot.data.docs.forEach((doc) {
+              users.add([doc.id, UserDto(
+                  doc.data()['firstName'],
+                  doc.data()['lastName'],
+                  doc.data()['location'],
+                  DateTime.tryParse(doc.data()['dateOfBirth']),
+                  doc.data()['photoUrl']
+              )
+              ]);
+            });
+
+            return Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return UserWidget(user: users[index][1], goToPage: () async {
+                    var uid = users[index][0];
+                    String chatId;
+                    chatId = await _chatService.getChat(currentUid, uid).then((value) {
+                      chatId = value;
+                      return value;
+                    });
+                    if (chatId == null)
+                      chatId = await _chatService.createChat(
+                          currentUid, uid);
+                    await Navigator.push(context, MaterialPageRoute(builder: (
+                        context) {
+                      return Chat(
+                        chatId: chatId, user: users[index][1], uid2: uid,);
+                    }));
+                  },);
+                },),
+            );
+          }
+
+          return CircularProgressIndicator();
+        });
   }
 }

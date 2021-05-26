@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class UserRepository {
   var _dbReference = FirebaseFirestore.instance.collection('users');
@@ -30,17 +31,17 @@ class UserRepository {
     return await _dbReference
         .where('firstName', isEqualTo: user.firstName)
         .where('lastName', isEqualTo: user.lastName)
+        .where('dateOfBirth', isEqualTo: user.dateOfBirth)
         .limit(1)
         .get().then((value) {
           return value.docs.first.id; //????
         });
-
   }
 
-  Future<List<UserDto>> search(List<String> criterions, String name) async{
+  Future<Map<String, UserDto>> search(List<String> criterions, String name) async{
     var result = await _dbReference.get();
       var usersModel = result.docs;
-      var users = <UserDto>[];
+      var users = Map<String, UserDto>();
 
       usersModel.forEach((value) { //todo: check
         for (var criterion in criterions) {
@@ -49,7 +50,7 @@ class UserRepository {
             UserDto userDto = UserDto(
                 value['firstName'], value['lastName'], value['location'],
                 DateTime.tryParse(value['dateOfBirth']), value['photoUrl']);
-            users.add(userDto);
+            users[value.id] = userDto;
           }
         }
       });

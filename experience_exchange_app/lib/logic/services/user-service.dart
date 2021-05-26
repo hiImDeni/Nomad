@@ -30,7 +30,7 @@ class UserService extends ChangeNotifier {
     return await repository.getUid(user);
   }
 
-  Future<List<UserDto>> searchByName(String name) async {
+  Future<Map<String, UserDto>> searchByName(String name) async {
     return await repository.search(['lastName', 'firstName'], name);
   }
 
