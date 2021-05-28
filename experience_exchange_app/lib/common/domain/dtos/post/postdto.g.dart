@@ -13,10 +13,7 @@ PostDto _$PostDtoFromJson(Map<String, dynamic> json) {
     json['mediaUrl'] as String,
     json['text'] as String,
     json['upvotes'] as int,
-    (json['upvotesDtos'] as List)
-        ?.map((e) =>
-            e == null ? null : UpvoteDto.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['upvotesDtos'] as List)?.map((e) => e as String)?.toList(),
   );
 }
 

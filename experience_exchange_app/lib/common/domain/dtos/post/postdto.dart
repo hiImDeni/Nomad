@@ -1,4 +1,3 @@
-import 'package:experience_exchange_app/common/domain/dtos/upvote/upvotedto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'postdto.g.dart';
@@ -10,7 +9,7 @@ class PostDto {
   String mediaUrl;
   String text;
   int upvotes;
-  List<UpvoteDto> upvotesDtos; //?
+  List<String> upvotesDtos; //?
 
   PostDto(this.postId, this.uid, this.mediaUrl, this.text, this.upvotes, this.upvotesDtos);
 

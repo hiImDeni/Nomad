@@ -1,6 +1,7 @@
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/widgets/user.dart';
+import 'package:experience_exchange_app/logic/services/connection-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,8 +21,10 @@ class NewsfeedPage extends StatefulWidget {
 }
 
 class NewsfeedPageState extends State<NewsfeedPage> {
-  TextEditingController _textEditingController = TextEditingController();
   UserService _userService;
+
+  TextEditingController _textEditingController = TextEditingController();
+
   Future<Map<String, UserDto>> _usersFuture;
 
   @override
@@ -40,7 +43,7 @@ class NewsfeedPageState extends State<NewsfeedPage> {
               TextField(
                 controller: _textEditingController,
                 onChanged: (text) { searchUsers(text); },
-                decoration: InputDecoration(hintText: 'Search users',
+                decoration: InputDecoration(hintText: 'Search by location',
                   contentPadding: EdgeInsets.only(
                     // bottom: 20,
                       left: 20,
@@ -70,7 +73,7 @@ class NewsfeedPageState extends State<NewsfeedPage> {
   searchUsers(String text) {
     setState(() {
       if (text != '') {
-        _usersFuture = _userService.searchByName(text);
+        _usersFuture = _userService.searchByLocation(text);
       }  else {
         _usersFuture = null;
       }

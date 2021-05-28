@@ -1,16 +1,12 @@
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/features/pages/chats-page.dart';
 import 'package:experience_exchange_app/features/pages/create-post-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
-import 'package:experience_exchange_app/logic/services/upvote-repository.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-import 'common/domain/dtos/user/userdto.dart';
-import 'common/helper.dart';
+
 import 'features/pages/newsfeed-page.dart';
 import 'features/pages/sign-in-page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'logic/services/chat-service.dart';
+import 'logic/services/connection-service.dart';
 import 'logic/services/post-service.dart';
 
 
@@ -37,8 +34,8 @@ class MyApp extends StatelessWidget {
       ChangeNotifierProvider(create: (context) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => UserService()),
       ChangeNotifierProvider(create: (context) => PostService()),
-      ChangeNotifierProvider(create: (context) => UpvoteService()),
       ChangeNotifierProvider(create: (context) => ChatService()),
+      ChangeNotifierProvider(create: (context) => ConnectionService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 

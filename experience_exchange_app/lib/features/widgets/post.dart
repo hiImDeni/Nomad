@@ -1,8 +1,5 @@
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
-import 'package:experience_exchange_app/common/domain/dtos/upvote/upvotedto.dart';
-import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:experience_exchange_app/logic/services/post-service.dart';
-import 'package:experience_exchange_app/logic/services/upvote-repository.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +21,6 @@ class Post extends StatefulWidget {
 class PostState extends State<Post> {
   PostDto post;
   UserService _userService;
-  UpvoteService _upvoteService;
   PostService _postService;
   int upvotes = 0;
   bool isUpvoted = false;
@@ -35,15 +31,8 @@ class PostState extends State<Post> {
   PostState({ this.post });
 
   @override
-  void initState() {
-    // isUpvoted = _upvoteService.getUpvote(postId, uid);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     _userService = Provider.of<UserService>(context);
-    _upvoteService = Provider.of<UpvoteService>(context);
     _postService = Provider.of<PostService>(context);
 
     upvotes = widget.post.upvotes;

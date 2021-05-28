@@ -1,18 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
-import 'package:experience_exchange_app/common/domain/dtos/upvote/upvotedto.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class PostRepository {
-  // var _dbReference = FirebaseDatabase.instance.reference();
   var _dbReference = FirebaseFirestore.instance.collection('posts');
 
   save(PostDto post) async {
     String key = _dbReference.doc().id;
     post.postId = key;
     await _dbReference.doc(key).set(post.toJson());
-    // post.postId = postId;
-    // return await _dbReference.child('/posts/$postId').set(post.toJson());
   }
 
   Stream getByUid(String uid) => _dbReference.where('uid', isEqualTo: uid).snapshots();
