@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
 import 'package:experience_exchange_app/common/domain/repository/post-repository.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,16 @@ class PostService extends ChangeNotifier {
   }
 
   Stream getByUid(String uid) => _postRepository.getByUid(uid);
+
+  Stream getByUids(List<String> uids) {
+    List<Stream> streams = <Stream>[];
+
+    for (String uid in uids) {
+      streams.add(getByUid(uid));
+    }
+
+    return StreamGroup.merge(streams);
+  }
 
   upvote(String postId, String uid) async {
     return await _postRepository.upvote(postId, uid);

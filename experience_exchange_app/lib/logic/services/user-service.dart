@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 class UserService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  final UserRepository repository = UserRepository(); //TODO: dependency injection
+  final UserRepository _userRepository = UserRepository(); //TODO: dependency injection
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   User get currentUser => _firebaseAuth.currentUser;
@@ -19,24 +19,30 @@ class UserService extends ChangeNotifier {
         photoURL: user.photoUrl
     );
 
-    await repository.save(uid, user);
+    await _userRepository.save(uid, user);
   }
 
   Future<UserDto> getById(String uid) async {
-    return await repository.getById(uid);
+    return await _userRepository.getById(uid);
   }
 
   Future<String> getUid(UserDto user) async {
-    return await repository.getUid(user);
+    return await _userRepository.getUid(user);
   }
 
   Future<Map<String, UserDto>> searchByName(String name) async {
-    return await repository.search(['lastName', 'firstName'], name);
+    return await _userRepository.search(['lastName', 'firstName'], name);
   }
 
   Future<Map<String, UserDto>> searchByLocation(String location) async {
-    return await repository.search(['location'], location);
+    return await _userRepository.search(['location'], location);
   }
 
-  Stream getUsers() => repository.getUsers();
+  Future<int> getNumberOfRequests(String uid) async {
+    return await _userRepository.getNumberOfRequests(uid);
+  }
+
+  Stream getRequests(String uid) => _userRepository.getRequests(uid);
+
+  Stream getUsers() => _userRepository.getUsers();
 }

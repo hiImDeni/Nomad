@@ -15,17 +15,8 @@ class UserRepository {
   Future<UserDto> getById(String uid) async{
     var snapshot = await _dbReference.doc(uid).get();
     var value = snapshot;
-    // var id = snapshot.key;
     return UserDto(value['firstName'], value['lastName'], value['location'], DateTime.tryParse(value['dateOfBirth']), value['photoUrl']); //?
   }
-
-  // Future<List<UserDto>> searchByName(String name) async{
-  //   var searchByName = await _search(['lastName', 'firstName'], name).then((value) {
-  //     if (value == null)
-  //       return [];
-  //     return value;
-  //   });
-  // }
 
   Future<String> getUid(UserDto user) async {
     return await _dbReference
@@ -56,6 +47,12 @@ class UserRepository {
       });
       return users;
   }
+
+  Future<int> getNumberOfRequests(String uid) async {
+    return await _dbReference.doc(uid).collection('requests').get().then((value) => value.size);
+  }
+
+  Stream getRequests(String uid) => _dbReference.doc(uid).collection('requests').snapshots();
 
   Stream getUsers() => _dbReference.snapshots();
 }

@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/connection-status.dart';
 import 'package:experience_exchange_app/common/domain/dtos/connection/connectiondto.dart';
@@ -32,10 +33,10 @@ class ConnectionRepository {
     });
   }
 
-  Future<ConnectionDto> getConnection(String uid1, String uid2) async {
-    var snapshot = await _getConnectionOneWay(uid1, uid2);
+  Future<ConnectionDto> getConnection(String requesterId, String receiverId) async {
+    var snapshot = await _getConnectionOneWay(requesterId, receiverId);
     if (snapshot.docs.isEmpty) {
-      snapshot = await _getConnectionOneWay(uid2, uid1);
+      snapshot = await _getConnectionOneWay(receiverId, requesterId);
     }
 
     if (snapshot.docs.isNotEmpty) {
@@ -50,10 +51,10 @@ class ConnectionRepository {
     return ConnectionDto(null, null, null, null);
   }
 
-  Future<QuerySnapshot> _getConnectionOneWay(String uid1, String uid2)  {
+  Future<QuerySnapshot> _getConnectionOneWay(String requesterId, String receiverId)  {
     return _connectionsReference
-        .where('uid1', isEqualTo: uid1)
-        .where('uid2', isEqualTo: uid2)
+        .where('uid1', isEqualTo: requesterId)
+        .where('uid2', isEqualTo: receiverId)
         .get();
   }
 
@@ -62,5 +63,23 @@ class ConnectionRepository {
     if (snapshot.docs.isNotEmpty) {
       await _connectionsReference.doc(snapshot.docs.first.id).delete();
     }
+  }
+
+  acceptConnection(ConnectionDto connectionDto) async {
+    await deleteRequest(connectionDto.uid2, connectionDto.uid1); // here uid1 sent the request to uid2 => uid1 appears in the requests list of uid2
+
+    var snapshot = await _getConnectionOneWay(connectionDto.uid1, connectionDto.uid2);
+    if (snapshot.docs.isNotEmpty) {
+      _connectionsReference.doc(snapshot.docs.first.id).set(connectionDto.toJson());
+    }
+  }
+
+  getConnectionsForUid(String uid) {
+    Stream stream1 = _connectionsReference
+        .where('uid1', isEqualTo: uid).snapshots();
+    Stream stream2 = _connectionsReference
+        .where('uid2', isEqualTo: uid).snapshots();
+
+    return StreamGroup.merge([stream1, stream2]);
   }
 }

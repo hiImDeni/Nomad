@@ -63,22 +63,15 @@ class EditProfilePageState extends State<EditProfilePage> {
     _userService = Provider.of<UserService>(context);
 
     return Scaffold(
-        appBar: null,
-        // key: _pageKey,
         body:
-        Form(
-          // key: _formPageKey,
-            child:
             SingleChildScrollView(
                 child: Container(
                     height: MediaQuery
                         .of(context)
                         .size
                         .height,
-                    child: Stack(
-                        children: <Widget>[
-                          Container(
-                            child: Column(
+                    child:
+                          Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 CircularProfileAvatar(
@@ -95,12 +88,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
                               ],
                             ),
-                          ),
-                        ]
-                    )
                 )
             )
-        )
     );
   }
 
@@ -117,16 +106,9 @@ class EditProfilePageState extends State<EditProfilePage> {
     user.location = locationInput.text;
     user.dateOfBirth = DateTime.tryParse(dateInput.text);
 
-    // user = new UserDto(firstNameInput.text, lastNameInput.text, locationInput.text, DateTime.tryParse(dateInput.text), firebaseUrl);
-
     await _userService.updateUserProfile(user);
 
-    // Navigator.pop(context);
-    Navigator.push(context,
-        MaterialPageRoute(
-            builder: (context) {
-              return HomePage();
-            }));
+    Navigator.pop(context);
   }
 
   _setImage() async {
