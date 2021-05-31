@@ -182,7 +182,7 @@ class PostContentState extends State<PostContent> {
                                 Container(padding: EdgeInsets.only(top: 20, left: 30),
                                     width: MediaQuery.of(context).size.width,
                                     child:
-                                  Text(commentsDtos[index].text, style: TextStyle(fontSize: 20), textAlign: TextAlign.left,)
+                                  Text(commentsDtos[index].text, style: TextStyle(fontSize: 15), textAlign: TextAlign.left,)
                                 ),
                               ]);
                             }

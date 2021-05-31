@@ -11,6 +11,7 @@ import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   final String uid;
@@ -68,7 +69,7 @@ class ProfilePageState extends State<ProfilePage> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 70)),
+              Padding(padding: EdgeInsets.only(top: 50)),
 
               CircularProfileAvatar(
                 "",
@@ -80,6 +81,23 @@ class ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                         fontSize: 25, fontWeight: FontWeight.bold),)),
               ),
+              TextButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.location_on),
+                      Text(user.location)
+                    ],
+                  ),
+                  onPressed: () async {
+                    String googleUrl = 'https://www.google.com/maps/place/${user.location}';
+                    print(googleUrl);
+                    if (await canLaunch(googleUrl)) {
+                      await launch(googleUrl);
+                    } else {
+                      throw 'Could not open the map.';
+                    }
+                  }),
 
               currentUid != _userService.currentUser.uid
                   ? FutureBuilder(

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 class UserService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  final UserRepository _userRepository = UserRepository(); //TODO: dependency injection
+  final UserRepository _userRepository = UserRepository();
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   User get currentUser => _firebaseAuth.currentUser;

@@ -34,7 +34,7 @@ class UserRepository {
       var usersModel = result.docs;
       var users = Map<String, UserDto>();
 
-      usersModel.forEach((value) { //todo: check
+      usersModel.forEach((value) {
         for (var criterion in criterions) {
           var searchValue = value[criterion].toLowerCase();
           if (searchValue.startsWith(name.toLowerCase())) {

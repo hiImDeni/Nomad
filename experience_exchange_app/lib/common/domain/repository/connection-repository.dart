@@ -29,7 +29,7 @@ class ConnectionRepository {
 
   Future<ConnectionStatus> getStatus(String connectionId) async {
     await _connectionsReference.doc(connectionId).get().then((result) {
-      return result['status']; //todo: check
+      return result['status'];
     });
   }
 

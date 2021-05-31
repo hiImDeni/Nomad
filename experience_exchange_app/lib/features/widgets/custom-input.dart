@@ -38,12 +38,8 @@ class CustomInputState extends State<CustomInput> {
         padding: EdgeInsets.only(top: 30.0, left: 40.0, right: 40.0),
         child:TextField(
           controller: textEditingController,
-          //TODO: add validator
 
           decoration: InputDecoration(labelText: label,
-            // labelStyle: TextStyle(
-            //     color: _focusNode.hasFocus ? Scheme.mainColor : Scheme.inputBorder //TODO: fix label focus color
-            // ),
             contentPadding: EdgeInsets.only(
                 bottom: 20,
                 left: 15,

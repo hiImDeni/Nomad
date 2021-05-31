@@ -1,11 +1,12 @@
 bool validateEmail(String email) {
-  //TODO
-  print(email);
-  return email.isNotEmpty;
+  RegExp regExp = new RegExp(r"/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
+  return email.isNotEmpty && regExp.hasMatch(email);
 }
 
 bool validatePassword(String password) {
-  //TODO
-  print(password);
-  return password.isNotEmpty;
+  if (password.isEmpty)
+    return false;
+  if (password.length < 7)
+    return false;
+  return true;
 }
