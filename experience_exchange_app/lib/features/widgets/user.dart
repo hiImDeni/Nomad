@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 class UserWidget extends StatefulWidget{
   UserDto user;
   Function goToPage;
+  double height, fontSize;
 
 
-  UserWidget({this.user, this.goToPage});
+  UserWidget({this.user, this.goToPage, this.height, this.fontSize});
 
   @override
   State<StatefulWidget> createState() {
@@ -17,15 +18,27 @@ class UserWidget extends StatefulWidget{
 }
 
 class UserState extends State<UserWidget> {
-  UserState();
+  double height, fontSize;
+
+  @override
+  void initState() {
+    super.initState();
+
+    height = widget.height != null ? widget.height : 55;
+    fontSize = widget.fontSize != null ? widget.fontSize : 15;
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(backgroundImage: NetworkImage(widget.user.photoUrl),),
-      title: Text(widget.user.firstName + " " + widget.user.lastName),
+    return Container(height: height,
+      child:
+      ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(widget.user.photoUrl),),
+      title: Text(widget.user.firstName + " " + widget.user.lastName, style: TextStyle(fontSize: fontSize),),
       onTap: widget.goToPage,
-    );
+    ));
   }
 
 }

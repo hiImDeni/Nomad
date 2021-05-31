@@ -13,8 +13,14 @@ PostDto _$PostDtoFromJson(Map<String, dynamic> json) {
     json['mediaUrl'] as String,
     json['text'] as String,
     json['upvotes'] as int,
-    (json['upvotesDtos'] as List)?.map((e) => e as String)?.toList(),
-  );
+    json['comments'] as int,
+  )
+    ..upvotesDtos =
+        (json['upvotesDtos'] as List)?.map((e) => e as String)?.toList()
+    ..commentDtos = (json['commentDtos'] as List)
+        ?.map((e) =>
+            e == null ? null : CommentDto.fromJson(e as Map<String, dynamic>))
+        ?.toList();
 }
 
 Map<String, dynamic> _$PostDtoToJson(PostDto instance) => <String, dynamic>{
@@ -24,4 +30,6 @@ Map<String, dynamic> _$PostDtoToJson(PostDto instance) => <String, dynamic>{
       'text': instance.text,
       'upvotes': instance.upvotes,
       'upvotesDtos': instance.upvotesDtos,
+      'comments': instance.comments,
+      'commentDtos': instance.commentDtos,
     };

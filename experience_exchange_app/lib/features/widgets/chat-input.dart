@@ -21,7 +21,7 @@ class ChatInputState extends State<ChatInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(bottom: 5),
+        padding: EdgeInsets.only(bottom: 5, left: 10, right: 10),
         width: MediaQuery.of(context).size.width,
         child: TextField(
           maxLines: 5,

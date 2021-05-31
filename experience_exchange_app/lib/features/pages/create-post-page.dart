@@ -7,11 +7,8 @@ import 'package:experience_exchange_app/features/widgets/alert.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/logic/services/post-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../scheme.dart';
@@ -65,7 +62,8 @@ class CreatePostPageState extends State<CreatePostPage> {
               children: <Widget>[
                 Title(color: Scheme.mainColor, child: Text('Create Post')),
                 Spacer(),
-                TextButton(onPressed: () async => _post(), child: Text('Post'))
+                TextButton(onPressed: () async { await _showImagePicker(); }, child: Text('Add Media'))
+
               ],
             ),
 
@@ -97,7 +95,7 @@ class CreatePostPageState extends State<CreatePostPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                MainButton(text: 'Add Photo', action: () async => _setPhoto()),
+                Center(child: MainButton(text: 'Post', action: () async { await _post(); })),
               ],
             )
           ],
@@ -105,8 +103,8 @@ class CreatePostPageState extends State<CreatePostPage> {
     );
   }
 
-  _setPhoto() async {
-    File selectedImage = await Helper.selectImage();
+  _setPhoto(File selectedImage) async {
+    // File selectedImage = await Helper.selectImage();
     _mediaFile = await Helper.cropImage(selectedImage);
 
     setState(() {
@@ -129,7 +127,7 @@ class CreatePostPageState extends State<CreatePostPage> {
           mediaUrl,
           controller.text,
           0,
-          []
+          0
       );
       await _postService.createPost(post);
       _showSnackBar(context, 'Post successfully created');
@@ -147,5 +145,41 @@ class CreatePostPageState extends State<CreatePostPage> {
 
   _showAlertDialog(BuildContext context, String text) {
     showDialog(context: context, builder: (_) => Alert(context, text));
+  }
+
+  _showImagePicker() {
+    File selectedImage;
+
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        selectedImage = await Helper.selectImageFromGallery();
+                        _setPhoto(selectedImage);
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      selectedImage = await Helper.selectImageFromCamera();
+                      _setPhoto(selectedImage);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
+    _setPhoto(selectedImage);
   }
 }

@@ -5,12 +5,11 @@ part 'commentdto.g.dart';
 @JsonSerializable()
 class CommentDto {
   // String commentId;
-  String postId;
   String uid;
   DateTime date;
   String text;
 
-  CommentDto(this.postId, this.uid, this.date, this.text);
+  CommentDto(this.uid, this.date, this.text);
 
   factory CommentDto.fromJson(Map<String, dynamic> json) => _$CommentDtoFromJson(json);
 

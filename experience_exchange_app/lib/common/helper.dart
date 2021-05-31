@@ -12,8 +12,13 @@ class Helper {
     return await snapshot.ref.getDownloadURL();
   }
 
-  static Future<File> selectImage() async {
+  static Future<File> selectImageFromGallery() async {
     final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    return File(pickedFile.path);
+  }
+
+  static Future<File> selectImageFromCamera() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
     return File(pickedFile.path);
   }
 

@@ -109,7 +109,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   _setImage() async {
-    File selectedImage = await Helper.selectImage();
+    File selectedImage = await Helper.selectImageFromGallery();
     _imageFile = await Helper.cropImage(selectedImage);
 
     setState(() {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:experience_exchange_app/common/domain/dtos/comment/commentdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
 
 class PostRepository {
@@ -27,4 +28,11 @@ class PostRepository {
       return value.exists;
     });
   }
+
+  comment(String postId, CommentDto comment) async {
+    await _dbReference.doc(postId).collection('commentDtos').doc().set(comment.toJson());
+    await _dbReference.doc(postId).update({'comments': FieldValue.increment(1)});
+  }
+
+  Stream getComments(String postId) => _dbReference.doc(postId).collection('commentDtos').snapshots();
 }
