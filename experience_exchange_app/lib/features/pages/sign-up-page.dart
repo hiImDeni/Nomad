@@ -36,10 +36,8 @@ class SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: null,
-        // key: _pageKey,
         body:
         Form(
-          // key: _formPageKey,
             child:
             SingleChildScrollView(
                 child: Container(
@@ -89,9 +87,6 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   _signUp(BuildContext context) async {
-    final provider = Provider.of<AuthenticationService>(context, listen: false);
-    // provider.signInWithGoogle();
-
     String email = emailInput.text;
     String password = passwordInput.text;
 

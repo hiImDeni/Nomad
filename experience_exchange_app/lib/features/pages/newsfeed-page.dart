@@ -73,9 +73,7 @@ class NewsfeedPageState extends State<NewsfeedPage> {
                           List posts = [];
 
                           snapshot.data.docs.forEach((doc) {
-                            posts.add(PostDto(doc.data()['postId'], doc.data()['uid'],
-                                doc.data()['mediaUrl'], doc.data()['text'],
-                                doc.data()['upvotes'], doc.data()['upvoteDtos']));
+                            posts.add(PostDto.fromJson(doc.data()));
                           });
 
                           return ListView.builder(
@@ -94,7 +92,7 @@ class NewsfeedPageState extends State<NewsfeedPage> {
                           );
                         }
 
-                        return CircularProgressIndicator();
+                        return Center(child: CircularProgressIndicator());
                       },
                     ),);
                 }

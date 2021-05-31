@@ -8,12 +8,10 @@ part of 'chatdto.dart';
 
 ChatDto _$ChatDtoFromJson(Map<String, dynamic> json) {
   return ChatDto(
-    json['uid1'] as String,
-    json['uid2'] as String,
+    (json['uids'] as List)?.map((e) => e as String)?.toList(),
   );
 }
 
 Map<String, dynamic> _$ChatDtoToJson(ChatDto instance) => <String, dynamic>{
-      'uid1': instance.uid1,
-      'uid2': instance.uid2,
+      'uids': instance.uids,
     };

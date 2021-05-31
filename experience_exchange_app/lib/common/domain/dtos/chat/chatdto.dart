@@ -4,10 +4,9 @@ part 'chatdto.g.dart';
 
 @JsonSerializable()
 class ChatDto {
-  String uid1;
-  String uid2;
+  List<String> uids;
 
-  ChatDto(this.uid1, this.uid2);
+  ChatDto(this.uids);
 
   factory ChatDto.fromJson(Map<String, dynamic> json) => _$ChatDtoFromJson(json);
 

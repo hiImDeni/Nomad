@@ -9,8 +9,9 @@ class MessageDto {
   String uid2;
   String text;
   DateTime date;
+  bool read;
 
-  MessageDto(this.uid1, this.uid2, this.text, this.date);
+  MessageDto(this.uid1, this.uid2, this.text, this.date, this.read);
 
   factory MessageDto.fromJson(Map<String, dynamic> json) => _$MessageDtoFromJson(json);
 

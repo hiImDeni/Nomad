@@ -24,6 +24,8 @@ class ChatInputState extends State<ChatInput> {
         padding: EdgeInsets.only(bottom: 5),
         width: MediaQuery.of(context).size.width,
         child: TextField(
+          maxLines: 5,
+          minLines: 1,
           textCapitalization: TextCapitalization.sentences,
           controller: widget.textEditingController,
           decoration: InputDecoration(

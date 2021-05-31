@@ -34,13 +34,17 @@ class ChatState extends State<Chat>{
   ChatInput _chatInput;
 
   @override
+  void initState() {
+    super.initState();
+
+    _chatInput = ChatInput(action: () async { await _sendMessage(); });
+  }
+
+  @override
   Widget build(BuildContext context) {
     _chatService = Provider.of<ChatService>(context);
     _userService = Provider.of<UserService>(context);
     current = _userService.currentUser;
-
-    _chatInput = ChatInput(action: () async { await _sendMessage(); });
-
 
     return Scaffold(
         body: Container(
@@ -55,7 +59,6 @@ class ChatState extends State<Chat>{
                 child: Padding(
                     padding: EdgeInsets.only(top:10, bottom: 10),
                     child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                         Padding(padding: EdgeInsets.only(left: 10, right: 10), child:
                         CircleAvatar(backgroundImage: NetworkImage(widget.user.photoUrl),),
@@ -82,15 +85,13 @@ class ChatState extends State<Chat>{
                         List messages = [];
 
                         snapshot.data.docs.forEach((doc) {
-                          messages.add(MessageDto(doc.data()['uid1'], doc.data()['uid2'], doc.data()['text'], DateTime.tryParse(doc.data()['date'])));
+                          messages.add(MessageDto.fromJson(doc.data()));
                         });
 
                         return
-                          // SingleChildScrollView(
-                          // physics: BouncingScrollPhysics(),
-                          // child:
                           ListView.builder(
                             shrinkWrap: true,
+                            reverse: true,
                             physics: BouncingScrollPhysics(),
                             itemCount: messages.length,
                             itemBuilder: (context, index) {
@@ -109,38 +110,27 @@ class ChatState extends State<Chat>{
                                   ),
                                 ),
                               );
-
-
-                              // return Post(post: posts[index]);
-                            },//),
+                            },
                         );
                       }
 
                       return CircularProgressIndicator();
                   },
                 )),
-    // _loadMessages(),
-    //           Spacer(),
               Divider(),
               _chatInput,
-
             ]
           ),
         )
     );
   }
 
-  _loadMessages() {
-    return StreamBuilder(
-      stream: FirebaseDatabase.instance.reference().child('/chats/').onValue,
-      builder: (context, snapshot) {
-        return CircularProgressIndicator();
-      });
-  }
-
   _sendMessage() async {
     var text = _chatInput.text;
-    MessageDto message = MessageDto(current.uid, widget.uid2, text, DateTime.now());
+    if (text.trim().isEmpty)
+      return;
+
+    MessageDto message = MessageDto(current.uid, widget.uid2, text, DateTime.now(), false);
     _chatInput.text = '';
     await _chatService.addMessage(widget.chatId, message);
   }

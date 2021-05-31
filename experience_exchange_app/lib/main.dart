@@ -4,7 +4,6 @@ import 'package:experience_exchange_app/features/pages/create-post-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
-import 'package:experience_exchange_app/features/widgets/search-input.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 
@@ -65,11 +64,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-/// This is the private State class that goes with MyStatefulWidget.
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[NewsfeedPage(), ProfilePage(), CreatePostPage()];
 
   UserService _userService;
@@ -117,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
                 ),
-                prefixIcon: IconButton(icon: Icon(Icons.search)),
+                prefixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {},),
               ),
             )
         ),

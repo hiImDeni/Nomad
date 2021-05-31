@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/common/helper.dart';
-import '../../main.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:experience_exchange_app/features/widgets/date-input.dart';
@@ -30,10 +29,8 @@ class EditProfilePageState extends State<EditProfilePage> {
   CustomInput lastNameInput;
   CustomInput locationInput;
 
-  // TextEditingController dateController = TextEditingController();
   DateInput dateInput;
 
-  ImagePicker _imagePicker = ImagePicker();
   Image _currentImage = Image.asset('assets/images/take-photo.webp');
   File _imageFile;
 

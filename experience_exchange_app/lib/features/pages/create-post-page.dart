@@ -98,7 +98,6 @@ class CreatePostPageState extends State<CreatePostPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 MainButton(text: 'Add Photo', action: () async => _setPhoto()),
-                // MainButton(text: 'Add Video', action: _setVideo())
               ],
             )
           ],

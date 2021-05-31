@@ -9,7 +9,6 @@ import 'package:experience_exchange_app/logic/services/authentication-service.da
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -31,18 +30,12 @@ class SignInPageState extends State<SignInPage> {
       validator: validatePassword,
   );
 
-  //TODO: fix keys??
-  // final _formPageKey = GlobalKey<FormState>();
-  // final _pageKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: null,
-        // key: _pageKey,
         body:
         Form(
-          // key: _formPageKey,
             child:
             SingleChildScrollView(
                 child: Container(
