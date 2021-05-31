@@ -5,7 +5,9 @@ import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
+import 'package:experience_exchange_app/logic/services/notification-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 
 import 'features/pages/newsfeed-page.dart';
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
       ChangeNotifierProvider(create: (context) => PostService()),
       ChangeNotifierProvider(create: (context) => ChatService()),
       ChangeNotifierProvider(create: (context) => ConnectionService()),
+      ChangeNotifierProvider(create: (context) => NotificationService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
@@ -74,10 +77,28 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _textEditingController = TextEditingController();
   Future<Map<String, UserDto>> _usersFuture;
 
+  String _notificationTitle, _notificationBody;
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationService.registerNotification();
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+
+      setState(() {
+        _notificationTitle = message.notification.title;
+        _notificationBody = message.notification.body;
+      });
+    });
+
   }
 
   @override
