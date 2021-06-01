@@ -8,8 +8,9 @@ class ChatInput extends StatefulWidget {
   set text(String message) { this.textEditingController.text = message; }
 
   Function action;
+  bool enabled;
 
-  ChatInput({@required this.action}) { textEditingController = TextEditingController(); }
+  ChatInput({@required this.action, this.enabled}) { textEditingController = TextEditingController(); }
 
   @override
   State<StatefulWidget> createState() {
@@ -26,6 +27,7 @@ class ChatInputState extends State<ChatInput> {
         child: TextField(
           maxLines: 5,
           minLines: 1,
+          enabled: widget.enabled != null ? widget.enabled : true,
           textCapitalization: TextCapitalization.sentences,
           controller: widget.textEditingController,
           decoration: InputDecoration(

@@ -76,9 +76,13 @@ class ConnectionRepository {
 
   getConnectionsForUid(String uid) {
     Stream stream1 = _connectionsReference
-        .where('uid1', isEqualTo: uid).snapshots();
+        .where('uid1', isEqualTo: uid)
+        .where('status', isEqualTo: 'Accepted')
+        .snapshots();
     Stream stream2 = _connectionsReference
-        .where('uid2', isEqualTo: uid).snapshots();
+        .where('uid2', isEqualTo: uid)
+        .where('status', isEqualTo: 'Accepted')
+        .snapshots();
 
     return StreamGroup.merge([stream1, stream2]);
   }

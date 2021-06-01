@@ -35,13 +35,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      // Provider<AuthenticationService>(create: (_) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => AuthenticationService()),
       ChangeNotifierProvider(create: (context) => UserService()),
       ChangeNotifierProvider(create: (context) => PostService()),
       ChangeNotifierProvider(create: (context) => ChatService()),
       ChangeNotifierProvider(create: (context) => ConnectionService()),
-      ChangeNotifierProvider(create: (context) => NotificationService()),
       StreamProvider(create: (context) => context.read<AuthenticationService>().authStateChanges),//listens to authentication changes
     ],
 
@@ -89,15 +87,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    NotificationService.registerNotification();
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-
-      setState(() {
-        _notificationTitle = message.notification.title;
-        _notificationBody = message.notification.body;
-      });
-    });
+    // NotificationService.registerNotification();
+    //
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //
+    //   setState(() {
+    //     _notificationTitle = message.notification.title;
+    //     _notificationBody = message.notification.body;
+    //   });
+    // });
 
   }
 

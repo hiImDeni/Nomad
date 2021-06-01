@@ -4,7 +4,6 @@ part 'userdto.g.dart';
 
 @JsonSerializable()
 class UserDto{
-  // String uid;
   String firstName;
   String lastName;
   String location;

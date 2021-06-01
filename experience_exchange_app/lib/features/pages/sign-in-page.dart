@@ -95,7 +95,7 @@ class SignInPageState extends State<SignInPage> {
       _showSnackBar(context, "Please enter a valid email");
       return;
     }
-    if (!validateEmail(password)) {
+    if (!validatePassword(password)) {
       _showSnackBar(context, "Please enter a valid password");
       return;
     }

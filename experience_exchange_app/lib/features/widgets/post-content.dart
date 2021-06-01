@@ -1,8 +1,11 @@
+import 'package:experience_exchange_app/common/connection-status.dart';
 import 'package:experience_exchange_app/common/domain/dtos/comment/commentdto.dart';
+import 'package:experience_exchange_app/common/domain/dtos/connection/connectiondto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/widgets/user.dart';
+import 'package:experience_exchange_app/logic/services/connection-service.dart';
 import 'package:experience_exchange_app/logic/services/post-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,12 +28,12 @@ class PostContent extends StatefulWidget {
 class PostContentState extends State<PostContent> {
   UserService _userService;
   PostService _postService;
+  ConnectionService _connectionService;
 
   int upvotes, comments;
   bool isUpvoted = false;
   Color iconColor = Colors.black;
 
-  Icon _upvoteIcon;
   ChatInput _chatInput;
 
   @override
@@ -38,13 +41,13 @@ class PostContentState extends State<PostContent> {
     super.initState();
     upvotes = widget.post.upvotes;
     comments = widget.post.comments;
-    _chatInput = ChatInput(action: () async { await _comment(); });
   }
 
   @override
   Widget build(BuildContext context) {
     _userService = Provider.of<UserService>(context);
     _postService = Provider.of<PostService>(context);
+    _connectionService = Provider.of<ConnectionService>(context);
 
     return Column(
       children: [
@@ -83,7 +86,7 @@ class PostContentState extends State<PostContent> {
             Column(
               children: [Row(
                 children: [
-                  IconButton(icon: Icon(Icons.comment_outlined), onPressed: () {_showCommentModal(); },),
+                  IconButton(icon: Icon(Icons.comment_outlined), onPressed: () async {await _showCommentModal(); },),
                   Text(widget.post.comments.toString()),
                 ],
               )],
@@ -133,7 +136,17 @@ class PostContentState extends State<PostContent> {
     await _postService.comment(widget.post.postId, _userService.currentUser.uid, text);
   }
 
-  _showCommentModal() {
+  _showCommentModal() async {
+    bool areConnected = true;
+
+    if (_userService.currentUser.uid != widget.post.uid) {
+      ConnectionDto connection = await _connectionService.getConnection(_userService.currentUser.uid, widget.post.uid);
+      if (connection.status != ConnectionStatus.Accepted)
+        areConnected = false;
+    }
+
+    _chatInput = ChatInput(enabled: areConnected, action: () async { await _comment(); });
+
     showBottomSheet(context: context, builder: (context){
       return Container(
         height: MediaQuery.of(context).size.height,
