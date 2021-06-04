@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -10,7 +13,7 @@ class NotificationService extends ChangeNotifier {
   //todo: cloud functions to automatically send notifications
 
   static final  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   static User user = FirebaseAuth.instance.currentUser;
 
@@ -30,17 +33,18 @@ class NotificationService extends ChangeNotifier {
       print('User granted permission');
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        // Parse the message received
         var title = message.notification.title;
         var body = message.notification.body;
 
-        showSimpleNotification(
-          Text(title),
-          leading: Icon(Icons.info_outline),
-          subtitle: Text(body),
-          // background: Colors.cyan.shade700,
-          duration: Duration(seconds: 2),
-        );
+        showNotification(message.notification);
+
+        // showSimpleNotification(
+        //   Text(title),
+        //   leading: Icon(Icons.info_outline),
+        //   subtitle: Text(body),
+        //   // background: Colors.cyan.shade700,
+        //   duration: Duration(seconds: 2),
+        // );
       });
 
       firebaseMessaging.getToken().then((token) {
@@ -69,10 +73,28 @@ class NotificationService extends ChangeNotifier {
     }
   }
 
-  void configLocalNotification() {
+  static void configLocalNotification() {
     var initializationSettingsAndroid = new AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  static void showNotification(message) async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      Platform.isAndroid ? 'com.dfa.experienceexchangeapp' : 'com.duytq.experienceexchangeapp',
+      'Notification',
+      'your channel description',
+      playSound: true,
+      enableVibration: true,
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics =
+    new NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, message['title'].toString(), message['body'].toString(), platformChannelSpecifics,
+        payload: json.encode(message));
   }
 }

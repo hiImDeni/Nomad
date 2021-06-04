@@ -50,49 +50,52 @@ class PostContentState extends State<PostContent> {
     _connectionService = Provider.of<ConnectionService>(context);
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(widget.post.text, style: TextStyle(fontSize: 15)),
         Padding(padding: EdgeInsets.only(top: 15)),
         widget.post.mediaUrl != ''
             ? Container(
-            height: 170,
+            // width: MediaQuery.of(context).size.width,
             child: Center (child: Image.network(widget.post.mediaUrl))
         )
             : Container(),
-        Row(
-          children: [
-            Column( children: [Row(
+        Container(
+        padding: EdgeInsets.only(left: 30, right: 30,),
+        child:
+          Row(
               children: [
-                StreamBuilder(
-                    stream: Stream.fromFuture(_postService.isUpvoted(widget.post.postId, _userService.currentUser.uid)),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        isUpvoted = snapshot.data;
-                        iconColor = isUpvoted ? Colors.redAccent : Colors.black;
-                      }
-                      return IconButton(icon: Icon(
-                        Icons.favorite_outline_rounded,
-                        color: iconColor,),
-                        onPressed: () async {
-                          await _handleTap();
-                        },);
-                    }),
-                // IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: () async { await _upvote(); },),
-                Text(upvotes.toString()),
-              ],
-            )],
+                Column( children: [Row(
+                  children: [
+                    StreamBuilder(
+                        stream: Stream.fromFuture(_postService.isUpvoted(widget.post.postId, _userService.currentUser.uid)),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            isUpvoted = snapshot.data;
+                            iconColor = isUpvoted ? Colors.redAccent : Colors.black;
+                          }
+                          return IconButton(icon: Icon(
+                            Icons.favorite_outline_rounded,
+                            color: iconColor,),
+                            onPressed: () async {
+                              await _handleTap();
+                            },);
+                        }),
+                    // IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: () async { await _upvote(); },),
+                    Text(upvotes.toString()),
+                  ],
+                )],
 
-            ),
-            Column(
-              children: [Row(
-                children: [
-                  IconButton(icon: Icon(Icons.comment_outlined), onPressed: () async {await _showCommentModal(); },),
-                  Text(widget.post.comments.toString()),
-                ],
-              )],
-            )
-          ],
-        )
+                ),
+                Column(
+                  children: [Row(
+                    children: [
+                      IconButton(icon: Icon(Icons.comment_outlined), onPressed: () async {await _showCommentModal(); },),
+                      Text(widget.post.comments.toString()),
+                    ],
+                  )],
+                )
+              ],))
       ],
     );
   }

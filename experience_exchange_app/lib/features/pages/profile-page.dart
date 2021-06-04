@@ -1,4 +1,3 @@
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/common/connection-status.dart';
 import 'package:experience_exchange_app/common/domain/dtos/connection/connectiondto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
@@ -26,8 +25,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  List<PostDto> posts;
-
   UserService _userService;
   PostService _postService;
   ConnectionService _connectionService;
@@ -56,7 +53,7 @@ class ProfilePageState extends State<ProfilePage> {
       currentUid = _userService.currentUser.uid;
     }
 
-    return Scaffold(body: FutureBuilder(
+    return FutureBuilder(
       future: _userService.getById(currentUid),
       builder: (context, snapshot)
       {
@@ -69,35 +66,89 @@ class ProfilePageState extends State<ProfilePage> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 50)),
+              Padding(padding: EdgeInsets.only(top: 50, left: 20, right: 20),
+                child: Row (
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(user.photoUrl),
+                          radius: 40
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 10), child:
+                        Title(color: Colors.black,
+                            child: Text("${user.firstName}",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),)),
+                        ),
+                        Padding(padding: EdgeInsets.only(bottom: 15), child:
+                        Title(color: Colors.black,
+                            child: Text("${user.lastName}",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),)),
+                        ),
+                      ]),
 
-              CircularProfileAvatar(
-                "",
-                child: ClipOval(child: Image.network(user.photoUrl)),
+                      Column(children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [StreamBuilder(
+                                stream: _postService.getByUid(currentUid),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData)
+                                    return Text(snapshot.data.docs.length.toString(), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),);
+                                  return Container();
+                                },
+                              ),
+                              Text('posts')
+                          ]),
+
+                          Padding(padding: EdgeInsets.only(left: 30),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    StreamBuilder(
+                                      stream: _connectionService.getConnectionsForUid(currentUid),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData)
+                                          return Text(snapshot.data.docs.length.toString(), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),);
+                                        return Container();
+                                      },
+                                    ),
+                                    Text('connections')
+                                  ])
+                          )]
+                        ),
+                        Row(children: [
+                          TextButton(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(Icons.location_on),
+                                  Text(user.location)
+                                ],
+                              ),
+                              onPressed: () async {
+                                String googleUrl = 'https://www.google.com/maps/place/${user.location}';
+                                print(googleUrl);
+                                if (await canLaunch(googleUrl)) {
+                                  await launch(googleUrl);
+                                } else {
+                                  throw 'Could not open the map.';
+                                }
+                              }),
+                        ],)
+                      ])
+                    ]),
               ),
-              Padding(padding: EdgeInsets.only(top: 10, bottom: 15), child:
-              Title(color: Colors.black,
-                  child: Text("${user.firstName} ${user.lastName}",
-                    style: TextStyle(
-                        fontSize: 25, fontWeight: FontWeight.bold),)),
-              ),
-              TextButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(Icons.location_on),
-                      Text(user.location)
-                    ],
-                  ),
-                  onPressed: () async {
-                    String googleUrl = 'https://www.google.com/maps/place/${user.location}';
-                    print(googleUrl);
-                    if (await canLaunch(googleUrl)) {
-                      await launch(googleUrl);
-                    } else {
-                      throw 'Could not open the map.';
-                    }
-                  }),
+
+
 
               currentUid != _userService.currentUser.uid
                   ? FutureBuilder(
@@ -117,7 +168,7 @@ class ProfilePageState extends State<ProfilePage> {
                         );
                       }
 
-                      return CircularProgressIndicator();
+                      return Center(child: CircularProgressIndicator());
                   })
                   : Container(),
 
@@ -159,8 +210,8 @@ class ProfilePageState extends State<ProfilePage> {
           );
         }
 
-        return CircularProgressIndicator();
-      }));
+        return Center(child: CircularProgressIndicator());
+      });
   }
 
   _handleConnection(ConnectionDto connection) async {

@@ -4,9 +4,12 @@ import 'package:experience_exchange_app/features/pages/create-post-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/scheme.dart';
+import 'package:experience_exchange_app/features/widgets/drawer.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:experience_exchange_app/logic/services/notification-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 
@@ -32,6 +35,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  FirebaseAnalytics analytics = FirebaseAnalytics();
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
@@ -52,6 +57,9 @@ class MyApp extends StatelessWidget {
           unselectedWidgetColor: Scheme.inactiveColor,
           scaffoldBackgroundColor: Scheme.backgroundColor,
         ),
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ],
         home: HomePage(),
       ),
     );
@@ -66,13 +74,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  UserService _userService;
+  User _firebaseUser;
+
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[NewsfeedPage(), ProfilePage(), CreatePostPage()];
 
-  UserService _userService;
-  User firebaseUser;
-
   TextEditingController _textEditingController = TextEditingController();
+  Widget _searchBar;
   Future<Map<String, UserDto>> _usersFuture;
 
   String _notificationTitle, _notificationBody;
@@ -87,57 +96,52 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // NotificationService.registerNotification();
-    //
-    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //
-    //   setState(() {
-    //     _notificationTitle = message.notification.title;
-    //     _notificationBody = message.notification.body;
-    //   });
-    // });
+    //todo: send and receive notifications
+    NotificationService.registerNotification();
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+
+      setState(() {
+        _notificationTitle = message.notification.title;
+        _notificationBody = message.notification.body;
+      });
+    });
 
   }
 
   @override
   Widget build(BuildContext context) {
-    firebaseUser = context.watch<User>();
+    _firebaseUser = context.watch<User>();
 
     _userService = Provider.of<UserService>(context);
 
-    if (firebaseUser == null)
+    if (_firebaseUser == null)
       return SignInPage();
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-        title:  Container(
-            height: 40,
-            child:
-            TextField(
-              controller: _textEditingController,
-              onChanged: (text) { _searchUsers(text); },
-              decoration: InputDecoration(hintText: 'Search by location',
-                contentPadding: EdgeInsets.only(
-                  // bottom: 20,
-                    left: 20,
-                    right: 20
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: Scheme.inputColor, width: 1.5),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
-                ),
-                prefixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {},),
-              ),
-            )
+    _searchBar = TextField(
+      controller: _textEditingController,
+      onChanged: (text) { _searchUsers(text); },
+      decoration: InputDecoration(hintText: 'Search by location',
+        contentPadding: EdgeInsets.only(
+          // bottom: 20,
+            left: 20,
+            right: 20
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: Scheme.inputColor, width: 1.5),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: Scheme.inactiveColor, width: 1.5),
+        ),
+        prefixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {},),
       ),
-      drawer: _displayDrawer(),
+    );
+
+    return Scaffold(
+      appBar: _displayAppBar(),
+      drawer: DrawerWidget(),
       body:
         Container(
           margin: EdgeInsets.only(left: 15, right: 15),
@@ -174,78 +178,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _displayDrawer() {
-    return Drawer(
-      child:
-    ListView(
-      // Important: Remove any padding from the ListView.
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        SafeArea(child:
-          ListTile( title: Text('Menu', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,),)),
-        ),
-        Divider(),
-        ListTile(
-          title: Text('Edit Profile'),
-          onTap: () async {
-            await _goToEditProfile(firebaseUser);
-          },
-        ),
-        ListTile(
-          title: Text('Chats'),
-          onTap: () async { _gotToChats(); },
-        ),
-        ListTile(
-          title: Text('Requests'),
-          trailing: FutureBuilder(
-            future: _userService.getNumberOfRequests(firebaseUser.uid),
-            builder: (context, snapshot){
-              int requests = 0;
-              if (snapshot.hasData) {
-                requests = snapshot.data;
-              }
-              return Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                  child: CircleAvatar(
-                child: Text(requests.toString(), style: TextStyle(color: Colors.white, fontSize: 10),),
-                backgroundColor: Colors.redAccent,
-              ));
-            },
-          ),
-          onTap: () async{
-            await _goToRequests();
-          },
-        ),
-        Spacer(),
-        ListTile(
-          title: Text('Sign out'),
-          onTap: () {
-            Navigator.pop(context);
-            AuthenticationService().signOut();
-          },
-        ),
-      ],
-    ),
-    );
-  }
-
-  _goToEditProfile(User firebaseUser) async {
-    Navigator.pop(context);
-    UserService service = Provider.of<UserService>(context, listen: false);
-    var currentUser = await service.getById(firebaseUser.uid);
-    Navigator.push(context, MaterialPageRoute(builder: (context) { return EditProfilePage(user: currentUser); }));
-  }
-
-  _gotToChats() async {
-    Navigator.pop(context);
-    await Navigator.push(context, MaterialPageRoute(builder: (context) { return ChatsPage(); }));
-  }
-
-  _goToRequests() async{
-    Navigator.pop(context);
-    await Navigator.push(context, MaterialPageRoute(builder: (context) { return RequestsPage(); }));
-  }
-
   _searchUsers(String text) {
     setState(() {
       if (text != '') {
@@ -254,6 +186,17 @@ class _HomePageState extends State<HomePage> {
         _usersFuture = null;
       }
     });
+  }
+
+  _displayAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(color: Colors.black),
+      title:  Container(
+          height: 40,
+          child: _searchBar
+      ),
+    );
   }
 
   Widget _showSearchResults() {
@@ -278,14 +221,19 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   return UserWidget(user: users[index], goToPage: () async{
                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return ProfilePage(uid: uids[index]);
+                      return
+                        Scaffold(
+                            appBar: _displayAppBar(),
+                            drawer: DrawerWidget(),
+                            body:ProfilePage(uid: uids[index])
+                        );
                     }));
                   },);
                 },
               ),
             );
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }
     );
   }
