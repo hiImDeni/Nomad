@@ -1,5 +1,5 @@
-import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/features/scheme.dart';
 import 'package:experience_exchange_app/common/domain/validators/validators.dart';
+import 'package:experience_exchange_app/common/scheme.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/sign-in-page.dart';
 import 'package:experience_exchange_app/features/widgets/custom-input.dart';

@@ -1,4 +1,5 @@
 import 'package:experience_exchange_app/features/pages/chats-page.dart';
+import 'package:experience_exchange_app/features/pages/connections-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/requests-page.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
@@ -42,6 +43,10 @@ class DrawerState extends State<DrawerWidget>{
           ListTile(
             title: Text('Chats'),
             onTap: () async { _gotToChats(); },
+          ),
+          ListTile(
+            title: Text('Connections'),
+            onTap: () async { _gotToConnections(); },
           ),
           ListTile(
             title: Text('Requests'),
@@ -94,5 +99,12 @@ class DrawerState extends State<DrawerWidget>{
   _goToRequests() async{
     Navigator.pop(context);
     await Navigator.push(context, MaterialPageRoute(builder: (context) { return RequestsPage(); }));
+  }
+
+  _gotToConnections() async {
+    Navigator.pop(context);
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return ConnectionsPage();
+    }));
   }
 }

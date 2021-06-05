@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:experience_exchange_app/common/helper.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
+import 'package:experience_exchange_app/features/widgets/alert.dart';
 import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:experience_exchange_app/features/widgets/date-input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +40,8 @@ class EditProfilePageState extends State<EditProfilePage> {
   UserDto user;
 
   UserService _userService;
+
+  Position _currentPosition;
 
   EditProfilePageState({this.user}) {
     if (this.user == null)
@@ -80,6 +85,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 lastNameInput,
                                 dateInput,
                                 locationInput,
+                                TextButton(onPressed: () async { await _getCurrentLocation(); }, child: Text('Use current location')),
                                 MainButton(text: "Save",
                                     action: () => _saveUser(context)),
 
@@ -115,5 +121,31 @@ class EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       _currentImage = Image.file(_imageFile);
     });
+  }
+
+  _getCurrentLocation() async {
+    var position = await Geolocator.getLastKnownPosition(forceAndroidLocationManager: true);
+
+    locationInput.text = await _getAddressFromLatLng(position);
+  }
+
+  Future<String> _getAddressFromLatLng(Position position) async {
+    if (position == null) {
+      _showAlertDialog(context, 'Location unavailable');
+      return locationInput.text;
+    }
+
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude
+    );
+
+    Placemark place = placemarks[0];
+
+    return "${place.locality}, ${place.country}";
+  }
+
+  _showAlertDialog(BuildContext context, String text) {
+    showDialog(context: context, builder: (_) => Alert(context, text));
   }
 }

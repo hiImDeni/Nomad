@@ -3,7 +3,7 @@ import 'package:experience_exchange_app/features/pages/chats-page.dart';
 import 'package:experience_exchange_app/features/pages/create-post-page.dart';
 import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
-import 'package:experience_exchange_app/features/scheme.dart';
+import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/scheme.dart';
 import 'package:experience_exchange_app/features/widgets/drawer.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:experience_exchange_app/logic/services/notification-service.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../scheme.dart';
+import '../../common/scheme.dart';
 
 class CustomInput extends StatefulWidget{
   TextEditingController _textEditingController;
@@ -16,6 +16,7 @@ class CustomInput extends StatefulWidget{
   }
 
   String get text { return this._textEditingController.text; }
+  set text(String t) { this._textEditingController.text = t; }
   TextEditingController get textEditingController { return this._textEditingController; }
 
   @override

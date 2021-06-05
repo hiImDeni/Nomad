@@ -53,7 +53,7 @@ class PostContentState extends State<PostContent> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(widget.post.text, style: TextStyle(fontSize: 15)),
-        Padding(padding: EdgeInsets.only(top: 15)),
+        Padding(padding: EdgeInsets.only(top: 5)),
         widget.post.mediaUrl != ''
             ? Container(
             // width: MediaQuery.of(context).size.width,
@@ -81,12 +81,12 @@ class PostContentState extends State<PostContent> {
                               await _handleTap();
                             },);
                         }),
-                    // IconButton(icon: Icon(Icons.favorite_outline_rounded), onPressed: () async { await _upvote(); },),
                     Text(upvotes.toString()),
                   ],
-                )],
+                )],),
 
-                ),
+                Padding(padding: EdgeInsets.only(left: 20),),
+
                 Column(
                   children: [Row(
                     children: [

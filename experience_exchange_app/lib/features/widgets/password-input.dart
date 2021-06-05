@@ -1,7 +1,7 @@
 import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:flutter/material.dart';
 
-import '../scheme.dart';
+import '../../common/scheme.dart';
 
 class PasswordInput extends StatefulWidget{
   TextEditingController textEditingController;

@@ -1,6 +1,6 @@
 import 'package:experience_exchange_app/common/domain/dtos/message/messagedto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
-import 'package:experience_exchange_app/features/scheme.dart';
+import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/scheme.dart';
 import 'package:experience_exchange_app/features/widgets/chat-input.dart';
 import 'package:experience_exchange_app/logic/services/chat-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
@@ -114,7 +114,7 @@ class ChatState extends State<Chat>{
                         );
                       }
 
-                      return CircularProgressIndicator();
+                      return Center(child: CircularProgressIndicator());
                   },
                 )),
               Divider(),

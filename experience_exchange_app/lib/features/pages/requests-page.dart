@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../scheme.dart';
+import '../../common/scheme.dart';
 
 class RequestsPage extends StatefulWidget {
   @override
@@ -87,7 +87,7 @@ class RequestsPageState extends State<RequestsPage> {
                                         onTap: () async {
                                           await Navigator.push(context,
                                               MaterialPageRoute(builder: (context) {
-                                                return ProfilePage(uid: requests[index]);
+                                                return Scaffold(body: ProfilePage(uid: requests[index]));
                                               }
                                           ));
                                         },

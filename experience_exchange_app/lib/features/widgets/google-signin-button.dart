@@ -1,4 +1,4 @@
-import 'package:experience_exchange_app/features/scheme.dart';
+import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/scheme.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

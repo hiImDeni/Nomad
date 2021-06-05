@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../scheme.dart';
+import '../../common/scheme.dart';
 
 class CreatePostPage extends StatefulWidget {
   final String uid;

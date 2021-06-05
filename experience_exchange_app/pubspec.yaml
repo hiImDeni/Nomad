@@ -46,6 +46,8 @@ dependencies:
   url_launcher: ^6.0.4
   overlay_support: any
   flutter_local_notifications: any
+  geocoding: ^2.0.0
+  geolocator: ^7.0.3
 
 dev_dependencies:
   flutter_test:

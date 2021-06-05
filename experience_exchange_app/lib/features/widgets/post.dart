@@ -65,13 +65,13 @@ class PostState extends State<Post> {
                         ]),
                   ],),
 
-                  Padding(padding: EdgeInsets.only(top: 5, bottom: 5),
+                  Padding(padding: EdgeInsets.only(top: 5),
                     child: Divider(),
                   ),
                 ])
             );
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 }

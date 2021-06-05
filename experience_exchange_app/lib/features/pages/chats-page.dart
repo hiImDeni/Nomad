@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../scheme.dart';
+import '../../common/scheme.dart';
 import 'chat.dart';
 
 
@@ -159,17 +159,6 @@ class ChatsPageState extends State<ChatsPage> {
 
           if (snapshot.hasData) {
             List<ChatDto> chats = [];
-
-            // snapshot.data.docs.forEach((doc) {
-            //   users.add([doc.id, UserDto(
-            //       doc.data()['firstName'],
-            //       doc.data()['lastName'],
-            //       doc.data()['location'],
-            //       DateTime.tryParse(doc.data()['dateOfBirth']),
-            //       doc.data()['photoUrl']
-            //   )
-            //   ]);
-            // });
 
             snapshot.data.docs.forEach((doc) {
               chats.add(ChatDto.fromJson(doc.data()));
