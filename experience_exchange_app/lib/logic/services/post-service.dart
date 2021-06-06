@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/domain/dtos/comment/commentdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
 import 'package:experience_exchange_app/common/domain/repository/post-repository.dart';
@@ -13,14 +14,14 @@ class PostService extends ChangeNotifier {
 
   Stream getByUid(String uid) => _postRepository.getByUid(uid);
 
-  Stream getByUids(List<String> uids) {
-    List<Stream> streams = <Stream>[];
+  Stream<List<QuerySnapshot>> getByUids(List<String> uids) {
+    List<Stream<QuerySnapshot>> streams = <Stream<QuerySnapshot>>[];
 
     for (String uid in uids) {
       streams.add(getByUid(uid));
     }
 
-    return StreamGroup.merge(streams);
+    return StreamZip(streams);
   }
 
   upvote(String postId, String uid) async {

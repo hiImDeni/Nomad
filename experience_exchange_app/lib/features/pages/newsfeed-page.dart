@@ -71,10 +71,14 @@ class NewsfeedPageState extends State<NewsfeedPage> {
 
                         if (snapshot.hasData) {
                           List posts = [];
+                          var streams = snapshot.data;
 
-                          snapshot.data.docs.forEach((doc) {
-                            posts.add(PostDto.fromJson(doc.data()));
+                          streams.forEach((query) {
+                            query.docs.forEach((doc) {
+                              posts.add(PostDto.fromJson(doc.data()));
+                            });
                           });
+
 
                           return ListView.builder(
                             shrinkWrap: true,
