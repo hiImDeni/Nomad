@@ -102,7 +102,7 @@ class SignInPageState extends State<SignInPage> {
 
     final provider = Provider.of<AuthenticationService>(context, listen: false);
     try {
-      final currentUser = provider.signIn(
+      final currentUser = await provider.signIn(
           email: emailInput.text, password: passwordInput.text);
 
       if (currentUser == null) {

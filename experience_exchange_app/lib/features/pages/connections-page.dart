@@ -60,8 +60,8 @@ class ConnectionsPageState extends State<ConnectionsPage> {
                         )
                     ),
 
-                    StreamBuilder(
-                      stream: _connectionService.getConnectionsForUid(_firebaseUser.uid),
+                    FutureBuilder(
+                      future: _connectionService.getConnectionsForUid(_firebaseUser.uid),
                       builder: (context, snapshot) {
                         if (snapshot.hasError)  {
                           return Text(snapshot.error.toString());
@@ -70,8 +70,8 @@ class ConnectionsPageState extends State<ConnectionsPage> {
                         if (snapshot.hasData) {
                           var connections = <ConnectionDto>[];
 
-                          snapshot.data.docs.forEach((doc) {
-                            connections.add(ConnectionDto.fromJson(doc.data()));
+                          snapshot.data.forEach((doc) {
+                            connections.add(doc);
                           });
                           return ListView.builder(
                             shrinkWrap: true,

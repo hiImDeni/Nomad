@@ -24,5 +24,7 @@ class ConnectionService extends ChangeNotifier {
     await _connectionRepository.acceptConnection(connectionDto);
   }
 
-  getConnectionsForUid(String uid) => _connectionRepository.getConnectionsForUid(uid);
+  Future<List<ConnectionDto>> getConnectionsForUid(String uid) async {
+    return await _connectionRepository.getConnectionsForUid(uid);
+  }
 }

@@ -74,16 +74,27 @@ class ConnectionRepository {
     }
   }
 
-  getConnectionsForUid(String uid) {
-    Stream stream1 = _connectionsReference
+  Future<List<ConnectionDto>> getConnectionsForUid(String uid) async {
+    QuerySnapshot stream1 = await _connectionsReference
         .where('uid1', isEqualTo: uid)
         .where('status', isEqualTo: 'Accepted')
-        .snapshots();
-    Stream stream2 = _connectionsReference
+        .get();
+    QuerySnapshot stream2 = await _connectionsReference
         .where('uid2', isEqualTo: uid)
         .where('status', isEqualTo: 'Accepted')
-        .snapshots();
+        .get();
 
-    return StreamGroup.merge([stream1, stream2]);
+    var result = <ConnectionDto>[];
+
+    stream1.docs.forEach((element) {
+      var connection = ConnectionDto.fromJson(element.data());
+      result.add(connection);
+    });
+    stream2.docs.forEach((element) {
+      var connection = ConnectionDto.fromJson(element.data());
+      result.add(connection);
+    });
+
+    return result;
   }
 }

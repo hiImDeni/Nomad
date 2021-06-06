@@ -113,11 +113,11 @@ class ProfilePageState extends State<ProfilePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    StreamBuilder(
-                                      stream: _connectionService.getConnectionsForUid(currentUid),
+                                    FutureBuilder(
+                                      future: _connectionService.getConnectionsForUid(currentUid),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData)
-                                          return Text(snapshot.data.docs.length.toString(), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),);
+                                          return Text(snapshot.data.length.toString(), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),);
                                         return Container();
                                       },
                                     ),

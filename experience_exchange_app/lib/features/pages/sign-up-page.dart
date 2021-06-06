@@ -90,27 +90,33 @@ class SignUpPageState extends State<SignUpPage> {
     String email = emailInput.text;
     String password = passwordInput.text;
 
-    if (validateEmail(email) && validatePassword(password)) {
-      try {
-        final provider = Provider.of<AuthenticationService>(context, listen: false);
-        final currentUser = await provider.signUp(email: emailInput.text, password: passwordInput.text);
+    if (!validateEmail(email)) {
+      _showSnackBar(context, "Please enter a valid email");
+      return;
+    }
+    if (!validatePassword(password)) {
+      _showSnackBar(context, "Please enter a valid password");
+      return;
+    }
 
-        if (currentUser == null) {
-          log.e("unable to sign up");
-        }
-        else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => EditProfilePage()),
-          );
-        }
-      } catch (e) {
-        log.e(e.message);
+    try {
+      final provider = Provider.of<AuthenticationService>(context, listen: false);
+      final currentUser = await provider.signUp(email: emailInput.text, password: passwordInput.text);
+
+      if (currentUser == null) {
+        _showSnackBar(context, "unable to sign up");
       }
+      else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => EditProfilePage()),
+        );
+      }
+    } catch (e) {
+      log.e(e.message);
     }
-    else {
-      log.e("Invalid username or password");
-    }
+
+
   }
 
   _googleSignUp(BuildContext context) async {
@@ -121,5 +127,11 @@ class SignUpPageState extends State<SignUpPage> {
       context,
       MaterialPageRoute(builder: (context) => HomePage()),
     );
+  }
+
+  _showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+    ));
   }
 }

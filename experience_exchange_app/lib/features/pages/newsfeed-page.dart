@@ -45,8 +45,8 @@ class NewsfeedPageState extends State<NewsfeedPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(top: 20),),
-          StreamBuilder(
-              stream: _connectionService.getConnectionsForUid(firebaseUser.uid),
+          FutureBuilder(
+              future: _connectionService.getConnectionsForUid(firebaseUser.uid),
               builder: (context, snapshot){
                 if (snapshot.hasError)
                   return Text(snapshot.error.toString());
@@ -54,11 +54,11 @@ class NewsfeedPageState extends State<NewsfeedPage> {
                 if (snapshot.hasData) {
                   List<String> uids = [];
 
-                  snapshot.data.docs.forEach((doc) {
-                    if (doc.data()['uid1'] != firebaseUser.uid)
-                      uids.add(doc.data()['uid1']);
+                  snapshot.data.forEach((doc) {
+                    if (doc.uid1 != firebaseUser.uid)
+                      uids.add(doc.uid1);
                     else
-                      uids.add(doc.data()['uid2']);
+                      uids.add(doc.uid2);
                   });
 
                   return Expanded(
