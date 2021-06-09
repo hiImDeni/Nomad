@@ -47,13 +47,15 @@ class NotificationService extends ChangeNotifier {
         // );
       });
 
-      firebaseMessaging.getToken().then((token) {
-        print('token: $token');
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'pushToken': token});
-      });
+      if (user != null) {
+        firebaseMessaging.getToken().then((token) {
+          print('token: $token');
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({'pushToken': token});
+        });
+      }
     } else {
       print('User declined or has not accepted permission');
     }

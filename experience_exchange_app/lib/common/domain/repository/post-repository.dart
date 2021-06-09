@@ -11,7 +11,7 @@ class PostRepository {
     await _dbReference.doc(key).set(post.toJson());
   }
 
-  Stream getByUid(String uid) => _dbReference.where('uid', isEqualTo: uid).snapshots();
+  Stream getByUid(String uid) => _dbReference.where('uid', isEqualTo: uid).orderBy('date', descending: true).snapshots();
 
   upvote(String postId, String uid) async {
     await _dbReference.doc(postId).collection('upvoteDtos').doc(uid).set({});

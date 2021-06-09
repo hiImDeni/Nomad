@@ -4,7 +4,6 @@ part 'commentdto.g.dart';
 
 @JsonSerializable()
 class CommentDto {
-  // String commentId;
   String uid;
   DateTime date;
   String text;

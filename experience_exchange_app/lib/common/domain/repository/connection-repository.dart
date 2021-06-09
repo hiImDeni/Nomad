@@ -1,8 +1,6 @@
-import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:experience_exchange_app/common/connection-status.dart';
 import 'package:experience_exchange_app/common/domain/dtos/connection/connectiondto.dart';
-import 'package:flutter/cupertino.dart';
 
 class ConnectionRepository {
   var _connectionsReference = FirebaseFirestore.instance.collection('connections');

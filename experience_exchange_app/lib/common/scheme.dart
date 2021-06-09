@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 class Scheme {
   static MaterialColor mainColor = createMaterialColor(Color(0xff219653));
-  // static MaterialColor bac
   static Color backgroundColor = Color(0xfff0f2f5);
   static Color inactiveColor = Color(0xffC6C3C3);
   static Color inputColor = Color(0xff7dc992);

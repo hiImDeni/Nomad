@@ -22,7 +22,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage> {
-  CustomInput emailInput = CustomInput(label: 'Username/email',
+  CustomInput emailInput = CustomInput(label: 'Email',
     validator: validateEmail,);
   PasswordInput passwordInput = PasswordInput(
     label: 'Password',
@@ -49,17 +49,21 @@ class SignUpPageState extends State<SignUpPage> {
                         children: <Widget>[
                           Container(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
+                                SafeArea(child:
+                                Container(
+                                  height: 210,
+                                  padding: EdgeInsets.only(top: 25,),
+                                  child: Image.asset('assets/images/logo_nomad.png'),
+                                )
+                                ),
+
                                 Text('SIGN UP', style: TextStyle(
-                                    color: Scheme.mainColor, fontSize: 30)),
+                                    color: Scheme.mainColor, fontSize: 27, fontWeight: FontWeight.w600)),
                                 emailInput,
                                 passwordInput,
                                 MainButton(text: "Sign Up", action: () async { await _signUp(context); }),
-                                Container(
-                                  margin: EdgeInsets.only(top: 20.0),
-                                  child: Text("OR", style: TextStyle(fontSize: 18)),
-                                ),
                                 GoogleSignInButton(action: () async => _googleSignUp(context)),
 
                                 Row(

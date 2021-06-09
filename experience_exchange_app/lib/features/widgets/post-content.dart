@@ -61,7 +61,7 @@ class PostContentState extends State<PostContent> {
         )
             : Container(),
         Container(
-        padding: EdgeInsets.only(left: 30, right: 30,),
+        padding: EdgeInsets.only(left: 10, right: 30,),
         child:
           Row(
               children: [

@@ -61,6 +61,9 @@ class NewsfeedPageState extends State<NewsfeedPage> {
                       uids.add(doc.uid2);
                   });
 
+                  if (uids.isEmpty)
+                    return Center(child: Text('No posts available'),);
+
                   return Expanded(
                     child: StreamBuilder(
                       stream: _postService.getByUids(uids),
@@ -78,7 +81,7 @@ class NewsfeedPageState extends State<NewsfeedPage> {
                               posts.add(PostDto.fromJson(doc.data()));
                             });
                           });
-
+                          posts.sort((post1, post2) => (post2.date).compareTo(post1.date));
 
                           return ListView.builder(
                             shrinkWrap: true,
@@ -100,7 +103,7 @@ class NewsfeedPageState extends State<NewsfeedPage> {
                       },
                     ),);
                 }
-                return Container();
+                return Center(child: CircularProgressIndicator());
               })
         ]
       )

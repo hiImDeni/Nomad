@@ -9,6 +9,7 @@ import 'package:experience_exchange_app/logic/services/authentication-service.da
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class SignInPage extends StatefulWidget {
 class SignInPageState extends State<SignInPage> {
   String errorMessage;
 
-  CustomInput emailInput = CustomInput(label: 'Username/email',
+  CustomInput emailInput = CustomInput(label: 'Email',
     validator: validateEmail,);
 
   PasswordInput passwordInput = PasswordInput(
@@ -47,10 +48,17 @@ class SignInPageState extends State<SignInPage> {
                         children: <Widget>[
                           Container(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
+                                SafeArea(child:
+                                  Container(
+                                    height: 210,
+                                    padding: EdgeInsets.only(top: 25,),
+                                    child: Image.asset('assets/images/logo_nomad.png'),
+                                  )
+                                ),
                                 Text('SIGN IN', style: TextStyle(
-                                    color: Scheme.mainColor, fontSize: 30)),
+                                    color: Scheme.mainColor, fontSize: 27, fontWeight: FontWeight.w600)),
                                 emailInput,
                                 passwordInput,
                                 MainButton(text: "Sign In",
@@ -108,7 +116,7 @@ class SignInPageState extends State<SignInPage> {
       if (currentUser == null) {
         _showSnackBar(context, "Invalid username or password");
       }
-    } on PlatformException catch (err) {
+    } catch (err) {
       var message = 'An error occurred, please check your credentials!';
 
       if (err.message != null) {
@@ -118,7 +126,7 @@ class SignInPageState extends State<SignInPage> {
         });
         print(message);
       }
-      _showSnackBar(context, message);
+      _showSnackBar(context, 'Incorrect email or password');
     }
   }
 

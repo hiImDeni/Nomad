@@ -219,16 +219,23 @@ class _HomePageState extends State<HomePage> {
                 shrinkWrap: true,
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return UserWidget(user: users[index], goToPage: () async{
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return
-                        Scaffold(
-                            appBar: _displayAppBar(),
-                            drawer: DrawerWidget(),
-                            body:ProfilePage(uid: uids[index])
-                        );
-                    }));
-                  },);
+                  UserDto user = users[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(user.photoUrl),),
+                    title: Text('${user.firstName} ${user.lastName}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                    subtitle: Text(user.location, style: TextStyle(fontSize: 12)),
+                    onTap: () async{
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return
+                          Scaffold(
+                              appBar: _displayAppBar(),
+                              drawer: DrawerWidget(),
+                              body:ProfilePage(uid: uids[index])
+                          );
+                      }));
+                    },
+                  );
                 },
               ),
             );

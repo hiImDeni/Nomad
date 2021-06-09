@@ -4,17 +4,20 @@ import 'package:json_annotation/json_annotation.dart';
 part 'postdto.g.dart';
 
 @JsonSerializable()
+
+//todo: add a date field
 class PostDto {
-  String postId; //?
+  String postId;
   String uid;
   String mediaUrl;
+  DateTime date;
   String text;
   int upvotes;
-  List<String> upvotesDtos; //?
+  List<String> upvotesDtos;
   int comments;
   List<CommentDto> commentDtos;
 
-  PostDto(this.postId, this.uid, this.mediaUrl, this.text, this.upvotes, this.comments);
+  PostDto(this.postId, this.uid, this.mediaUrl, this.date, this.text, this.upvotes, this.comments);
 
   factory PostDto.fromJson(Map<String, dynamic> json) => _$PostDtoFromJson(json);
 

@@ -102,36 +102,22 @@ class ConnectionsPageState extends State<ConnectionsPage> {
                                           },
                                           leading: CircleAvatar(backgroundImage: NetworkImage(user.photoUrl),),
                                           title: Text('${user.firstName} ${user.lastName}'),
-                                          trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                    onPressed: () async {
-                                                      String chatId;
-                                                      chatId = await _chatService.getChat(_firebaseUser.uid, uid2).then((
-                                                          value) {
-                                                        chatId = value;
-                                                        return value;
-                                                      });
-                                                      if (chatId == null)
-                                                        chatId = await _chatService.createChat(
-                                                            _firebaseUser.uid, uid2);
-                                                      Navigator.push(context,
-                                                          MaterialPageRoute(builder: (context) {
-                                                            return Chat(chatId: chatId, user: user, uid2: uid2);
-                                                          }
-                                                          ));
-                                                    },
-                                                    icon: Icon(Icons.message_outlined, color: Colors.green,)),
-
-                                                IconButton(
-                                                    onPressed: () async {
-                                                      await _connectionService.deleteConnection(
-                                                          ConnectionDto(uid2, _firebaseUser.uid, null, ConnectionStatus.Accepted));
-                                                    },
-                                                    icon: Icon(Icons.clear, color: Colors.redAccent,)),
-                                              ]
-                                          ));
+                                          trailing: IconButton(
+                                              onPressed: () async {
+                                                String chatId = await _chatService.getChat(_userService.currentUser.uid, uid2);
+                                                if (chatId == null) {
+                                                  await _chatService.createChat(_userService.currentUser.uid, uid2);
+                                                  chatId = await _chatService.getChat(_userService.currentUser.uid, uid2);
+                                                }
+                                                await Navigator.push(context,
+                                                    MaterialPageRoute(builder: (context) {
+                                                      return Chat(chatId: chatId, user: user, uid2: uid2);
+                                                    }
+                                                    ));
+                                              },
+                                              icon: Icon(Icons.message_outlined, color: Colors.green,)
+                                          ),
+                                      );
                                     }
 
                                     return Center(child: CircularProgressIndicator(),);

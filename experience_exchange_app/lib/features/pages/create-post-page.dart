@@ -30,7 +30,6 @@ class CreatePostPageState extends State<CreatePostPage> {
   Image _currentImage;
   String _text;
   TextEditingController controller;
-  // VideoElement _currentVideo;
 
   UserService _userService;
   PostService _postService;
@@ -54,7 +53,9 @@ class CreatePostPageState extends State<CreatePostPage> {
     uid = _userService.currentUser.uid;
     controller = TextEditingController(text: _text);
 
-    return Padding(padding: EdgeInsets.only(top: 80, left: 20, right: 20),
+    return SingleChildScrollView(child: Container(
+      height: 650,
+      padding: EdgeInsets.only(top: 80, left: 20, right: 20, bottom: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -67,7 +68,7 @@ class CreatePostPageState extends State<CreatePostPage> {
               ],
             ),
 
-            Card (child: TextField(
+            Card(child: TextField(
               controller: controller,
               onEditingComplete: () => setState(() {
                 _text = controller.text;
@@ -84,35 +85,31 @@ class CreatePostPageState extends State<CreatePostPage> {
                 contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),),
 
               style: TextStyle(fontSize: 18,),
-            ),),
-
-            _currentImage != null ?
-              ClipRect(
-                  child: _currentImage
-              ) : Padding(padding: EdgeInsets.only(bottom: 20)),
+            )),
 
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Center(child: MainButton(text: 'Post', action: () async { await _post(); })),
-              ],
-            )
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 5, right: 5),
+                height: 350,
+                child:  _currentImage != null ?_currentImage : null,
+              ),
+
+
+            Spacer(),
+            Center(child: MainButton(text: 'Post', action: () async { await _post(); })),
+
           ],
         ),
-    );
+    ));
   }
 
   _setPhoto(File selectedImage) async {
-    // File selectedImage = await Helper.selectImage();
     _mediaFile = await Helper.cropImage(selectedImage);
 
     setState(() {
       _currentImage = Image.file(_mediaFile);
     });
   }
-
-  _setVideo() {}
 
   _post() async {
     String mediaUrl = '';
@@ -125,11 +122,17 @@ class CreatePostPageState extends State<CreatePostPage> {
           '',
           uid,
           mediaUrl,
+          DateTime.now(),
           controller.text,
           0,
           0
       );
       await _postService.createPost(post);
+      setState(() {
+        controller.text = '';
+        _currentImage = null;
+      });
+
       _showSnackBar(context, 'Post successfully created');
     }
     else {

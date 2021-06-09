@@ -129,13 +129,11 @@ class ChatsPageState extends State<ChatsPage> {
                   return UserWidget(user: user, goToPage: () async{
                     var uid = uids[index];
 
-                    String chatId;
-                    chatId = await _chatService.getChat(_userService.currentUser.uid, uid).then((value) {
-                      chatId = value;
-                      return value;
-                    });
-                    if (chatId == null)
-                      chatId = await _chatService.createChat(_userService.currentUser.uid, uid);
+                    String chatId = await _chatService.getChat(_userService.currentUser.uid, uid);
+                    if (chatId == null) {
+                      await _chatService.createChat(_userService.currentUser.uid, uid);
+                      chatId = await _chatService.getChat(_userService.currentUser.uid, uid);
+                    }
                     await Navigator.push(context, MaterialPageRoute(builder: (context) {
                       return Chat(chatId: chatId, user: user, uid2: uid,);
                     }));
@@ -178,17 +176,15 @@ class ChatsPageState extends State<ChatsPage> {
                           UserDto user = snapshot.data;
                           return UserWidget(
                             user: user, goToPage: () async {
-                            // var uid = users[index][0];
                             String chatId;
-                            chatId =
-                            await _chatService.getChat(currentUid, uid).then((
-                                value) {
-                              chatId = value;
-                              return value;
-                            });
+                            chatId = await _chatService.getChat(currentUid, uid);
                             if (chatId == null)
-                              chatId = await _chatService.createChat(
-                                  currentUid, uid);
+                              await _chatService.createChat(
+                                  currentUid, uid).then((
+                                  value) {
+                                chatId = value;
+                                return value;
+                              });
                             await Navigator.push(
                                 context, MaterialPageRoute(builder: (context) {
                               return Chat(
@@ -204,7 +200,7 @@ class ChatsPageState extends State<ChatsPage> {
             );
           }
 
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         });
   }
 }

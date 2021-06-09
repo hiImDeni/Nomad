@@ -14,9 +14,8 @@ class ChatService extends ChangeNotifier {
     });
   }
 
-  Future<String> getChat(String uid1, String uid2) async {
-    var key = await _chatRepository.getChat(uid1, uid2);
-    return key;
+  Future getChat(String uid1, String uid2) async {
+    return await _chatRepository.getChat(uid1, uid2);
   }
 
   addMessage(String chatId, MessageDto message) async {

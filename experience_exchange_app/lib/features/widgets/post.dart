@@ -1,4 +1,5 @@
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
+import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/widgets/post-content.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,6 +52,15 @@ class PostState extends State<Post> {
             return Container(
                 padding: EdgeInsets.only(left: 30, right: 30, top: 5),
                 child: Column(children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                            return Scaffold(body:ProfilePage(uid: widget.post.uid));
+                          }
+                          ));
+                    },
+                    child:
                   Row(children: [
                     Column(
                         children: [
@@ -60,10 +70,10 @@ class PostState extends State<Post> {
                     Column(
                         children: [
                           Padding(padding: EdgeInsets.only(left: 10), child:
-                          Text(user.firstName + " " + user.lastName, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+                          Text(user.firstName + " " + user.lastName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                           ),
                         ]),
-                  ],),
+                  ],),),
 
                   Padding(padding: EdgeInsets.only(top: 5),
                     child: Divider(),

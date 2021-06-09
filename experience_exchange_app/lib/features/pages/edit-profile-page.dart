@@ -8,6 +8,7 @@ import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:experience_exchange_app/features/widgets/date-input.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
+import 'package:experience_exchange_app/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -46,7 +47,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   EditProfilePageState({this.user}) {
     if (this.user == null)
       this.user = UserDto('', '', '', DateTime.now(), '');
-    else {
+    else if (user.photoUrl != ''){
       _currentImage = Image.network(user.photoUrl);
     }
 
@@ -111,7 +112,7 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     await _userService.updateUserProfile(user);
 
-    Navigator.pop(context);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) { return HomePage(); }));
   }
 
   _setImage() async {
