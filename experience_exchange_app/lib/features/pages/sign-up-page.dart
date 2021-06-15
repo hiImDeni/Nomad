@@ -6,6 +6,7 @@ import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/features/widgets/password-input.dart';
+import 'package:experience_exchange_app/logic/services/analytics-service.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:experience_exchange_app/main.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,9 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage> {
+  AuthenticationService _authenticationService;
+  AnalyticsService _analyticsService;
+
   CustomInput emailInput = CustomInput(label: 'Email',
     validator: validateEmail,);
   PasswordInput passwordInput = PasswordInput(
@@ -29,11 +33,11 @@ class SignUpPageState extends State<SignUpPage> {
     validator: validatePassword,
   );
 
-  final log = Logger();
-
-
   @override
   Widget build(BuildContext context) {
+    _authenticationService = Provider.of<AuthenticationService>(context, listen: false);
+    _analyticsService = Provider.of<AnalyticsService>(context);
+
     return Scaffold(
         appBar: null,
         body:
@@ -104,20 +108,23 @@ class SignUpPageState extends State<SignUpPage> {
     }
 
     try {
-      final provider = Provider.of<AuthenticationService>(context, listen: false);
-      final currentUser = await provider.signUp(email: emailInput.text, password: passwordInput.text);
+
+      final currentUser = await _authenticationService.signUp(email: emailInput.text, password: passwordInput.text);
 
       if (currentUser == null) {
         _showSnackBar(context, "unable to sign up");
       }
       else {
-        Navigator.push(
+        await _analyticsService.logSignUp(emailInput.text);
+
+        await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => EditProfilePage()),
         );
       }
     } catch (e) {
-      log.e(e.message);
+      print(e.message);
+      _analyticsService.logSignUp(e.message);
     }
 
 
@@ -127,7 +134,7 @@ class SignUpPageState extends State<SignUpPage> {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
     await provider.signUpWithGoogle();
 
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => HomePage()),
     );

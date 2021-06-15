@@ -45,6 +45,11 @@ class AuthenticationService extends ChangeNotifier {
       );
       UserCredential user = await FirebaseAuth.instance.signInWithCredential(credentials);
 
+      var userDto = await repository.getById(currentUser.uid);
+      if (userDto == null) {
+        await _addUserProfile();
+      }
+
       isSigningIn = false;
       return user;
     }

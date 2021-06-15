@@ -5,6 +5,7 @@ import 'package:experience_exchange_app/features/widgets/custom-input.dart';
 import 'package:experience_exchange_app/features/widgets/google-signin-button.dart';
 import 'package:experience_exchange_app/features/widgets/main-button.dart';
 import 'package:experience_exchange_app/features/widgets/password-input.dart';
+import 'package:experience_exchange_app/logic/services/analytics-service.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,9 @@ class SignInPage extends StatefulWidget {
 }
 
 class SignInPageState extends State<SignInPage> {
+  AuthenticationService _authenticationService;
+  AnalyticsService _analyticsService;
+
   String errorMessage;
 
   CustomInput emailInput = CustomInput(label: 'Email',
@@ -33,6 +37,9 @@ class SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    _authenticationService = Provider.of<AuthenticationService>(context, listen: false);
+    _analyticsService = Provider.of<AnalyticsService>(context);
+
     return Scaffold(
         appBar: null,
         body:
@@ -95,7 +102,6 @@ class SignInPageState extends State<SignInPage> {
   }
 
   _signIn(BuildContext context) async {
-    //TODO: show snackbar if invalid password
     String email = emailInput.text;
     String password = passwordInput.text;
 
@@ -108,13 +114,15 @@ class SignInPageState extends State<SignInPage> {
       return;
     }
 
-    final provider = Provider.of<AuthenticationService>(context, listen: false);
     try {
-      final currentUser = await provider.signIn(
+      final currentUser = await _authenticationService.signIn(
           email: emailInput.text, password: passwordInput.text);
 
       if (currentUser == null) {
         _showSnackBar(context, "Invalid username or password");
+      }
+      else {
+        _analyticsService.logNewSignIn(emailInput.text);
       }
     } catch (err) {
       var message = 'An error occurred, please check your credentials!';
@@ -125,6 +133,7 @@ class SignInPageState extends State<SignInPage> {
           errorMessage = message;
         });
         print(message);
+        _analyticsService.logError(message);
       }
       _showSnackBar(context, 'Incorrect email or password');
     }
