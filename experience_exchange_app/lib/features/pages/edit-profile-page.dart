@@ -80,7 +80,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 CircularProfileAvatar(
                                   "",
                                     child: ClipOval(child: _currentImage),
-                                    onTap: () async {await _setImage();},
+                                    onTap: () async {await _showImagePicker();},
                                 ),
                                 firstNameInput,
                                 lastNameInput,
@@ -115,8 +115,8 @@ class EditProfilePageState extends State<EditProfilePage> {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) { return HomePage(); }));
   }
 
-  _setImage() async {
-    File selectedImage = await Helper.selectImageFromGallery();
+  _setImage(File selectedImage) async {
+    // File selectedImage = await Helper.selectImageFromGallery();
     _imageFile = await Helper.cropImage(selectedImage);
 
     setState(() {
@@ -148,5 +148,41 @@ class EditProfilePageState extends State<EditProfilePage> {
 
   _showAlertDialog(BuildContext context, String text) {
     showDialog(context: context, builder: (_) => Alert(context, text));
+  }
+
+  _showImagePicker() {
+    File selectedImage;
+
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        selectedImage = await Helper.selectImageFromGallery();
+                        _setImage(selectedImage);
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      selectedImage = await Helper.selectImageFromCamera();
+                      _setImage(selectedImage);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
+    _setImage(selectedImage);
   }
 }
