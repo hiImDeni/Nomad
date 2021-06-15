@@ -14,8 +14,10 @@ class UserRepository {
 
   Future<UserDto> getById(String uid) async{
     var snapshot = await _dbReference.doc(uid).get();
-    var value = snapshot;
-    return UserDto(value['firstName'], value['lastName'], value['location'], DateTime.tryParse(value['dateOfBirth']), value['photoUrl']); //?
+    if (snapshot.exists)
+      return UserDto.fromJson(snapshot.data()); //?
+    else
+      return null;
   }
 
   Future<String> getUid(UserDto user) async {

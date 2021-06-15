@@ -55,25 +55,6 @@ class AuthenticationService extends ChangeNotifier {
     }
    }
 
-  Future<UserCredential> signUpWithGoogle() async {
-    final googleAccount = await googleSignIn.signIn();
-    if (googleAccount == null) {
-      isSigningIn = false;
-      return null;
-    }
-    else {
-      final googleAuth = await googleAccount.authentication;
-      final credentials = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken
-      );
-      UserCredential user = await FirebaseAuth.instance.signInWithCredential(credentials);
-      await _addUserProfile();
-      isSigningIn = false;
-      return user;
-    }
-  }
-
   void signOut() async {
     if ( _firebaseAuth.currentUser.providerData.length == 2) {
       print(_firebaseAuth.currentUser.providerData[1].providerId);

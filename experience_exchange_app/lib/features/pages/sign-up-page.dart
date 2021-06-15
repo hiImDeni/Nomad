@@ -132,7 +132,7 @@ class SignUpPageState extends State<SignUpPage> {
 
   _googleSignUp(BuildContext context) async {
     final provider = Provider.of<AuthenticationService>(context, listen: false);
-    await provider.signUpWithGoogle();
+    await provider.signInWithGoogle();
 
     await Navigator.push(
       context,

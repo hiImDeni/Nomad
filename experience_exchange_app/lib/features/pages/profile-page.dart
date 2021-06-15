@@ -78,13 +78,13 @@ class ProfilePageState extends State<ProfilePage> {
                         ),
                         Padding(padding: EdgeInsets.only(top: 10), child:
                         Title(color: Colors.black,
-                            child: Text("${user.firstName}",
+                            child: Text(user.firstName,
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),)),
                         ),
                         Padding(padding: EdgeInsets.only(bottom: 15), child:
                         Title(color: Colors.black,
-                            child: Text("${user.lastName}",
+                            child: Text(user.lastName,
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),)),
                         ),
@@ -125,6 +125,7 @@ class ProfilePageState extends State<ProfilePage> {
                                   ])
                           )]
                         ),
+                        user.location != '' ?
                         Row(children: [
                           TextButton(
                               child: Row(
@@ -143,7 +144,7 @@ class ProfilePageState extends State<ProfilePage> {
                                   throw 'Could not open the map.';
                                 }
                               }),
-                        ],)
+                        ],) : Container(),
                       ])
                     ]),
               ),
