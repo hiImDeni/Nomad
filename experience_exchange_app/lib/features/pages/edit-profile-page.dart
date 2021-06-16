@@ -13,7 +13,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 
@@ -98,8 +97,6 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   _saveUser(BuildContext context) async {
-    // provider.getById(provider.currentUser.uid);
-
     String firebaseUrl;
     if (_imageFile != null) {
      firebaseUrl = await Helper.uploadImage(_imageFile);
@@ -116,7 +113,6 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   _setImage(File selectedImage) async {
-    // File selectedImage = await Helper.selectImageFromGallery();
     _imageFile = await Helper.cropImage(selectedImage);
 
     setState(() {

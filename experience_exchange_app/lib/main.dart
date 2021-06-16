@@ -1,9 +1,7 @@
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
-import 'package:experience_exchange_app/features/pages/chats-page.dart';
+import 'package:experience_exchange_app/common/scheme.dart';
 import 'package:experience_exchange_app/features/pages/create-post-page.dart';
-import 'package:experience_exchange_app/features/pages/edit-profile-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
-import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/scheme.dart';
 import 'package:experience_exchange_app/features/widgets/drawer.dart';
 import 'package:experience_exchange_app/logic/services/analytics-service.dart';
 import 'package:experience_exchange_app/logic/services/authentication-service.dart';
@@ -52,7 +50,6 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Scheme.mainColor,
-          // primaryColor: Scheme.mainColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           unselectedWidgetColor: Scheme.inactiveColor,
           scaffoldBackgroundColor: Scheme.backgroundColor,
@@ -96,7 +93,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    //todo: send and receive notifications
     NotificationService.registerNotification();
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -152,9 +148,8 @@ class _HomePageState extends State<HomePage> {
             _usersFuture != null ?
               _showSearchResults() :
               _widgetOptions.elementAt(_selectedIndex),
-
-
       ),
+
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
@@ -206,6 +201,7 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           }
+
           if (snapshot.hasData) {
             var result = snapshot.data;
 
@@ -240,6 +236,7 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           }
+          
           return Center(child: CircularProgressIndicator());
         }
     );

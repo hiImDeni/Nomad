@@ -11,7 +11,6 @@ import 'package:experience_exchange_app/logic/services/authentication-service.da
 import 'package:experience_exchange_app/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {

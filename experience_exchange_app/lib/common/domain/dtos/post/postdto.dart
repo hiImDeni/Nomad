@@ -5,7 +5,6 @@ part 'postdto.g.dart';
 
 @JsonSerializable()
 
-//todo: add a date field
 class PostDto {
   String postId;
   String uid;

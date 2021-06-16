@@ -4,7 +4,6 @@ part 'messagedto.g.dart';
 
 @JsonSerializable()
 class MessageDto {
-  // String messageId;
   String uid1;
   String uid2;
   String text;

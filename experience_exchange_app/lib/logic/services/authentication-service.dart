@@ -7,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthenticationService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final googleSignIn = GoogleSignIn();
-  final UserRepository repository = UserRepository(); //TODO: dependency injection
+  final UserRepository repository = UserRepository();
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
   User get currentUser => _firebaseAuth.currentUser;

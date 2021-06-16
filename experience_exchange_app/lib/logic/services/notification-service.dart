@@ -10,8 +10,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class NotificationService extends ChangeNotifier {
-  //todo: cloud functions to automatically send notifications
-
   static final  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -37,14 +35,6 @@ class NotificationService extends ChangeNotifier {
         var body = message.notification.body;
 
         showNotification(message.notification);
-
-        // showSimpleNotification(
-        //   Text(title),
-        //   leading: Icon(Icons.info_outline),
-        //   subtitle: Text(body),
-        //   // background: Colors.cyan.shade700,
-        //   duration: Duration(seconds: 2),
-        // );
       });
 
       if (user != null) {

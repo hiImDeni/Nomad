@@ -5,7 +5,6 @@ part 'connectiondto.g.dart';
 
 @JsonSerializable()
 class ConnectionDto {
-  // String connectionId;
   String uid1;
   String uid2;
   DateTime date;

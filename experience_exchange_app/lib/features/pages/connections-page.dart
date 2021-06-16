@@ -1,7 +1,5 @@
-import 'package:experience_exchange_app/common/connection-status.dart';
 import 'package:experience_exchange_app/common/domain/dtos/connection/connectiondto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
-import 'package:experience_exchange_app/features/pages/chats-page.dart';
 import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/logic/services/chat-service.dart';
 import 'package:experience_exchange_app/logic/services/connection-service.dart';
@@ -52,7 +50,6 @@ class ConnectionsPageState extends State<ConnectionsPage> {
                         child:
                         Padding(padding: EdgeInsets.only(top:10, bottom: 10),
                             child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Connections', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
                               ],

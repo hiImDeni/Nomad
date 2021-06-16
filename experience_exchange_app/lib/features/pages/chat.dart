@@ -5,7 +5,6 @@ import 'package:experience_exchange_app/features/widgets/chat-input.dart';
 import 'package:experience_exchange_app/logic/services/chat-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +13,6 @@ class Chat extends StatefulWidget{
   UserDto user;
   String uid2;
   String chatId;
-  // UserDto user2;
 
   Chat({this.chatId, this.uid2, this.user});
 

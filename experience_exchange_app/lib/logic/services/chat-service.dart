@@ -1,4 +1,3 @@
-import 'package:async/async.dart';
 import 'package:experience_exchange_app/common/domain/dtos/chat/chatdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/message/messagedto.dart';
 import 'package:experience_exchange_app/common/domain/repository/chat-repository.dart';

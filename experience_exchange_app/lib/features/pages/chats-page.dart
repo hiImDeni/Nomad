@@ -96,7 +96,6 @@ class ChatsPageState extends State<ChatsPage> {
   }
 
   searchUsers(String text) async{
-    // var users =  _userService.searchByName(_searchInput.text);
     setState(() {
       if (text != '') {
         _usersFuture = _userService.searchByName(text);

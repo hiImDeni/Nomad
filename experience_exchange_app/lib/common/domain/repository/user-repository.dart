@@ -5,8 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class UserRepository {
   var _dbReference = FirebaseFirestore.instance.collection('users');
-  // FirebaseDatabase.instance.reference();
-  // final Firestore firestore;
 
   Future<void> save(String id, UserDto user) async {
     return _dbReference.doc(id).set(user.toJson());
@@ -27,7 +25,7 @@ class UserRepository {
         .where('dateOfBirth', isEqualTo: user.dateOfBirth)
         .limit(1)
         .get().then((value) {
-          return value.docs.first.id; //????
+          return value.docs.first.id;
         });
   }
 

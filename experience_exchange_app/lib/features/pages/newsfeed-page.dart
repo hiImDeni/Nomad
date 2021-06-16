@@ -1,8 +1,6 @@
 import 'package:experience_exchange_app/common/domain/dtos/post/postdto.dart';
 import 'package:experience_exchange_app/common/domain/dtos/user/userdto.dart';
-import 'package:experience_exchange_app/features/pages/profile-page.dart';
 import 'package:experience_exchange_app/features/widgets/post.dart';
-import 'package:experience_exchange_app/features/widgets/user.dart';
 import 'package:experience_exchange_app/logic/services/connection-service.dart';
 import 'package:experience_exchange_app/logic/services/post-service.dart';
 import 'package:experience_exchange_app/logic/services/user-service.dart';
@@ -10,8 +8,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../common/scheme.dart';
 
 class NewsfeedPage extends StatefulWidget {
   const NewsfeedPage();
@@ -108,9 +104,5 @@ class NewsfeedPageState extends State<NewsfeedPage> {
         ]
       )
     );
-  }
-
-  _showFriendsPost() {
-    return Container();
   }
 }

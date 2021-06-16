@@ -1,9 +1,6 @@
-import 'file:///E:/faculta/Licenta/bachelor-thesis/experience_exchange_app/lib/common/scheme.dart';
-import 'package:experience_exchange_app/logic/services/authentication-service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   Function action;
