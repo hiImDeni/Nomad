@@ -152,7 +152,7 @@ class PostContentState extends State<PostContent> {
 
     showBottomSheet(context: context, builder: (context){
       return Container(
-        height: MediaQuery.of(context).size.height - 30,
+        height: MediaQuery.of(context).size.height - 40,
 
         child: Column(children: [
           Expanded(
